@@ -44,21 +44,23 @@ protected:
 	void Draw();
 	void Animate();
 	void ReactToInput();
-	void Move();
+	void Physics();
 	//bool IsCollidingWith(GD4N::CGameObject* other);
     //void CollidesWith(GD4N::CGameObject* other);
 
-	float spriteTimeLast;
-	float spriteTimeBetween;
+
 	float logicTimeLast;
 	float logicTimeBetween;
 
+
+	// animation
+	float spriteTimeLast;
+	float spriteTimeBetween;
+	void forwardFrame();
+	void decideFrame();
 	int curFrame;
 	int drawFrame;
 	bool frameForward;
-
-	// animation methods
-	void newAnimateState();
 
 
 	int zeroState;
@@ -68,16 +70,44 @@ protected:
 	int animLastZeroState;
 
 
+	// timing
+	void timer();
+	float dt;
+	float previousTime;
+
 	// physics
-	float fYSpeed;
-	float fXSpeed;
+	float vy;	float vx;	float vx_max;
+	float ay;	float ax;
+	
+	int jumpfuel;	int jumpmax;
+	
 	bool falling;
-	int jumpfuel;
-	int jumpmax;
+
+	void move();
+	void friction();
+	void bound();
+	void gravity();
+	void grind(float* v);
+
+	// moves
+	void accelerate_up();
+	void accelerate_down(); 
+	void accelerate_left(); 
+	void accelerate_right();
+	void jump();
 
 	GD4N::TVector2<int> position;
 
 	GD4N::CSurfaceSheet *zeroTexture;
+
+
+
+
+
+
+
+
+
 
 public:
 	CZero();

@@ -2,6 +2,14 @@
 #define _constants_h
 
 const float GRAVITY_ACC = 700.00f;
+const float MAX_VX = 700;
+const float MAX_VY = 700.00f;
+const float ZAX = 2000.00f;
+const float ZAY = 700.00f;
+
+const float FRIC_X = 700;
+const float LEFTWALL = 50;
+const float RIGHTWALL = 800;
 
 enum SFX_IDS {
 };
