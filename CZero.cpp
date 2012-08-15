@@ -12,16 +12,18 @@
 
 CZero::CZero() : CGameObject() {
 	//PHYSICS
-	position.x = 150;
-	position.y = 100;
+	position.x = STARTING_X;
+	position.y = STARTING_Y;
 	vy = 0;
 	vx = 0;
-	vx_max = 400.0f;
+	vx_max = MAX_VX;
+	vy_max = MAX_VY;
 	ay = ZAY;
 	ax = ZAX;
-	jumpmax = 3;
+	jumpmax = JUMP_FUEL_MAX;
 	jumpfuel = jumpmax;
 	falling = true;
+	previousTime = SDL_GetTicks() * 0.01f;
 
 	zeroState = STATE_STANDING;
 	animZeroState = AS_STANDING;
@@ -57,6 +59,7 @@ void CZero::Update() {
 	timer();
 	ReactToInput();
 	Physics();
+	readState();
 	Animate();
 }
 void CZero::Draw() {
@@ -77,58 +80,49 @@ void CZero::Animate() {
 	
 }
 
-void CZero::ReactToInput(){
-	zeroState = STATE_STANDING;
+void CZero::ReactToInput(){	
+	if(sInput->GetKey(KEYBIND_RIGHT))		{		accelerate_right();		}
+	if(sInput->GetKey(KEYBIND_LEFT))		{		accelerate_left();		}
+	if(sInput->GetKey(KEYBIND_JUMP))		{		jump();					}
+	else if(sInput->GetKeyUp(KEYBIND_JUMP)) {			breakjump();		}
 	
-	if(sInput->GetKey(SDLK_RIGHT)) {
-		zeroState = STATE_RUNNING;
-		accelerate_right();
-	}	//else if (sInput->GetKeyUp(SDLK_RIGHT)) {	zeroState = STATE_RUNNING;	}
-
-	if(sInput->GetKey(SDLK_LEFT)) {
-		zeroState = STATE_RUNNING;
-		accelerate_left();
-	}	//else if(sInput->GetKeyUp(SDLK_LEFT)) {		zeroState = STATE_RUNNING;	ax = 0;	}
-
-	if(sInput->GetKey(SDLK_SPACE) && jumpfuel > 0) {
-		jump();
-	} 
-	else if(sInput->GetKeyUp(SDLK_SPACE)) {
-		ay = 0;
-		jumpfuel = 0;
-	}
+	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{	jumpfuel = jumpmax;			}
 }
 
 
 // TIMER
 void CZero::timer() {
-	float nowTime = SDL_GetTicks() * 0.001f;
+	float nowTime = SDL_GetTicks() * 0.01f;
 	dt = nowTime - previousTime;
 	previousTime = nowTime;	
 }
 
 // PHYSICS
 void CZero::Physics() {
+	friction();
 	move();
 	bound();
-	friction();
 }
 void CZero::move() {
 	position.x += vx * dt;
 	position.y += vy * dt;
 }
 void CZero::bound() {
-	boundme(&position.x, LEFTWALL, RIGHTWALL);
-	if(position.y > 500) {
-		position.y = 500;
+	boundme(&position.x, LEFTWALL, RIGHTWALL);		//	left-right boundaries
+	
+	if(position.y > FLOORLEVEL) {							//	floor boundary
+		position.y = FLOORLEVEL;
 		vy = 0;
 		zeroState = STATE_STANDING;
-		jumpfuel = jumpmax;
 		falling = false;
 	}
 }
 void CZero::friction() {
 	grind(&vx);
+
+	//if( (int)(vx * dt * 100) == 0 ) vx = 0;
+
+	if(vy < 0) grind(&vy);
 	gravity();
 }
 
@@ -145,6 +139,17 @@ void CZero::gravity() {
 }
 
 // ANIMATION
+void CZero::readState() {
+	
+	if(!falling){	//on the ground
+		int nvx = (vx * dt);
+		if(nvx == 0) {	zeroState = STATE_STANDING;	}		// not moving
+		else		 {	zeroState = STATE_RUNNING;	}		// moving
+			
+	}
+	
+	
+}
 void CZero::forwardFrame() {
 	spriteTimeBetween = cycleFPS[animZeroState];				// set sprite update rate from array
 	if(spriteTimeLast + spriteTimeBetween < sTime->GetTime()){
@@ -163,14 +168,20 @@ void CZero::decideFrame() {
 	zeroTexture->SetCurrentFrame(drawFrame);
 }
 
-// MOVEMENT
-void CZero::accelerate_up()    {	vy -= ay * dt; minmaxf(&vy, -vx_max, vx_max); }
-void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vx_max, vx_max); }
-void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max); }
+// MOVES
+void CZero::accelerate_up()    {	vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max); }
+void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max); }
+
+void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max); }		//first statement accelerates vx; second statement limits maximum vx;
 void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max); }
 void CZero::jump()	{
-	zeroState = STATE_JUMPING;
-	ay -= 200;
-	jumpfuel--;
-	falling = true;
+	if(jumpfuel > 0) {
+		zeroState = STATE_JUMPING;
+		accelerate_up();
+		jumpfuel -= JUMPCONSUMPTION * dt;
+		falling = true;
+	}
+}
+void CZero::breakjump() {
+	jumpfuel = 0;
 }

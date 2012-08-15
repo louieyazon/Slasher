@@ -1,15 +1,31 @@
 #ifndef _constants_h
 #define _constants_h
 
-const float GRAVITY_ACC = 700.00f;
-const float MAX_VX = 700;
-const float MAX_VY = 700.00f;
-const float ZAX = 2000.00f;
-const float ZAY = 700.00f;
 
-const float FRIC_X = 700;
-const float LEFTWALL = 50;
-const float RIGHTWALL = 800;
+//CONTROLS
+const SDLKey KEYBIND_LEFT	= SDLK_LEFT;
+const SDLKey KEYBIND_RIGHT	= SDLK_RIGHT;
+const SDLKey KEYBIND_UP		= SDLK_UP;
+const SDLKey KEYBIND_DOWN	= SDLK_DOWN;
+const SDLKey KEYBIND_JUMP	= SDLK_SPACE;
+
+//PHYSICS CONSTANTS
+const float GRAVITY_ACC		= 200.0f;
+const float MAX_VX			= 45.0f;
+const float MAX_VY			= 300.0f;
+const float ZAX				= 100.0f;
+const float ZAY				= 200.0f;
+const float FRIC_X			= 30.0f;
+
+const float STARTING_X		= 150;
+const float STARTING_Y		= 150;
+const float JUMP_FUEL_MAX	= 50;
+const float JUMPCONSUMPTION	= 100;
+
+const float LEFTWALL		= 50;
+const float RIGHTWALL		= 750;
+const float FLOORLEVEL		= 500;
+
 
 enum SFX_IDS {
 };

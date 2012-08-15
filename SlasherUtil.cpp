@@ -23,3 +23,7 @@ void boundme (int* val, int min, int max) {
 	if(*val > max) *val = max;
 	if(*val < min) *val = min;
 }
+
+int round(float x){
+	return (int)(x + 0.5);
+};
