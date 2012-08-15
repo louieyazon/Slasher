@@ -122,11 +122,11 @@ const animPart aCycle[] = {	//  {numofFrames, delay, loops, sprite frame array, 
 								{ 2,	0.05f,		false	,	(int*)&sfZeroIntoRun	, AS_RUNNING	}, //zero into running
 								{ 14,	0.033f,		true	,	(int*)&sfZeroRun		, AS_RUNNING	}, //zero running
 								{ 2,	0.033f,		false	,	(int*)&sfZeroStopRun	, AS_STANDING	}, //zero stop running
-								{ 2,	0.033f,		false	,	(int*)&sfZeroJump		, AS_RISING		}, //zero jumpoff
+								{ 2,	0.067f,		false	,	(int*)&sfZeroJump		, AS_RISING		}, //zero jumpoff
 								{ 2,	0.033f,		true	,	(int*)&sfZeroRise		, AS_RISING		}, //zero rising
 								{ 5,	0.033f,		false	,	(int*)&sfZeroJT			, AS_FALLING	}, //zero jump transition
 								{ 3,	0.033f,		true	,	(int*)&sfZeroFall		, AS_FALLING	}, //zero falling
-								{ 4,	0.033f,		false	,	(int*)&sfZeroLand		, AS_STANDING	}, //zero landing
+								{ 4,	0.067f,		false	,	(int*)&sfZeroLand		, AS_STANDING	}, //zero landing
 								{ 8,	0.033f,		false	,	(int*)&sfZeroSlash1		, AS_KEEPSABER	}, //zero slash1
 								{ 8,	0.033f,		false	,	(int*)&sfZeroSlash2		, AS_KEEPSABER	}, //zero slash2
 								{ 8,	0.033f,		false	,	(int*)&sfZeroSlash3		, AS_KEEPSABER	}, //zero slash3

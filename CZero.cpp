@@ -102,7 +102,7 @@ void CZero::move() {
 void CZero::bound() {
 	boundme(&position.x, LEFTWALL, RIGHTWALL);		//	left-right boundaries
 	
-	if(position.y > FLOORLEVEL) {							//	floor boundary
+	if(position.y > FLOORLEVEL) {					//	floor boundary
 		position.y = FLOORLEVEL;
 		vy = 0;
 		zeroState = STATE_STANDING;
@@ -153,14 +153,12 @@ void CZero::setAnimationState() {
 	if(animZeroState != AS_LANDING) {
 		if(zeroState == STATE_STANDING) animZeroState = AS_STANDING;
 	}
-
 	if(zeroState == STATE_RUNNING) animZeroState = AS_RUNNING;
 	
 	//going up
 	if(vy < 0) {
 		if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
 	}
-
 	if( (int)vy == 0 && falling) animZeroState = AS_JUMPTRANS;
 
 	//going down
