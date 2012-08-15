@@ -107,6 +107,7 @@ void CZero::bound() {
 		vy = 0;
 		zeroState = STATE_STANDING;
 		falling = false;
+		animZeroState = AS_LANDING;
 	}
 }
 void CZero::friction() {
@@ -149,7 +150,10 @@ void CZero::Animate() {
 }
 
 void CZero::setAnimationState() {
-	if(zeroState == STATE_STANDING) animZeroState = AS_STANDING;
+	if(animZeroState != AS_LANDING) {
+		if(zeroState == STATE_STANDING) animZeroState = AS_STANDING;
+	}
+
 	if(zeroState == STATE_RUNNING) animZeroState = AS_RUNNING;
 	
 	//going up
@@ -158,13 +162,11 @@ void CZero::setAnimationState() {
 	}
 
 	if( (int)vy == 0 && falling) animZeroState = AS_JUMPTRANS;
+
 	//going down
 	if(vy > 0) {
 		if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
 	}
-
-
-
 }
 
 void CZero::forwardFrame() {
@@ -199,6 +201,7 @@ void CZero::jump()	{
 			zeroState = STATE_JUMPING;
 			falling = true;
 			accelerate_up();
+			animZeroState != AS_JUMPOFF;
 		}
 		//continue upward acceleration
 		accelerate_up();
