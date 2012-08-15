@@ -12,30 +12,30 @@
 
 CZero::CZero() : CGameObject() {
 	//PHYSICS
-	position.x = STARTING_X;
-	position.y = STARTING_Y;
-	vy = 0;
-	vx = 0;
-	vx_max = MAX_VX;
-	vy_max = MAX_VY;
-	ay = ZAY;
-	ax = ZAX;
-	jumpmax = JUMP_FUEL_MAX;
-	jumpfuel = jumpmax;
-	falling = true;
-	previousTime = SDL_GetTicks() * 0.01f;
+	position.x		= STARTING_X;
+	position.y		= STARTING_Y;
+	vy				= 0;
+	vx				= 0;
+	vx_max			= MAX_VX;
+	vy_max			= MAX_VY;
+	ay				= ZAY;
+	ax				= ZAX;
+	jumpmax			= JUMP_FUEL_MAX;
+	jumpfuel		= jumpmax;
+	falling			= true;
+	previousTime	= SDL_GetTicks() * 0.01f;
 
-	zeroState = STATE_STANDING;
-	animZeroState = AS_STANDING;
+	zeroState		= STATE_STANDING;
+	animZeroState	= AS_STANDING;
 
 	/*logicTimeBetween = 1.0000/50.0000;
 	logicTimeLast = -logicTimeBetween;*/
 
 
 	//animation
-	curFrame = 0;
-	drawFrame = 0;
-	frameForward = true;
+	curFrame		= 0;
+	drawFrame		= 0;
+	frameForward	= true;
 	spriteTimeBetween = 1.0000/60.0000;
 	spriteTimeLast = sTime->GetTime();
 
@@ -84,7 +84,9 @@ void CZero::ReactToInput(){
 	if(sInput->GetKey(KEYBIND_RIGHT))		{		accelerate_right();		}
 	if(sInput->GetKey(KEYBIND_LEFT))		{		accelerate_left();		}
 	if(sInput->GetKey(KEYBIND_JUMP))		{		jump();					}
-	else if(sInput->GetKeyUp(KEYBIND_JUMP)) {			breakjump();		}
+	else if(sInput->GetKeyUp(KEYBIND_JUMP)) {		breakjump();			}
+
+	if(sInput->GetKey(KEYBIND_ATTACK))		{		attack();				}
 	
 	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{	jumpfuel = jumpmax;			}
 }
@@ -127,8 +129,8 @@ void CZero::friction() {
 }
 
 void CZero::grind(float* v) {
-	int vel = *v;
-	int newMagnitude = (  abs(vel) - (FRIC_X * dt)  );
+	float vel = *v;
+	float newMagnitude = (  abs(vel) - (FRIC_X * dt)  );
 	if(newMagnitude < 0) newMagnitude = 0;
 	*v = signof(vel) * newMagnitude;
 }
@@ -176,12 +178,23 @@ void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max); }
 void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max); }
 void CZero::jump()	{
 	if(jumpfuel > 0) {
-		zeroState = STATE_JUMPING;
+		if(!falling) {						//jump from ground
+			zeroState = STATE_JUMPING;
+			falling = true;
+			accelerate_up();
+		}
+		//continue upward acceleration
 		accelerate_up();
 		jumpfuel -= JUMPCONSUMPTION * dt;
-		falling = true;
 	}
 }
 void CZero::breakjump() {
 	jumpfuel = 0;
+}
+
+void CZero::attack() {
+	// TODO
+	// set state to attacking/slashing
+	// separate ground attack from air attack
+	// detect the COMBO TIME WINDOW
 }

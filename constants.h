@@ -8,19 +8,27 @@ const SDLKey KEYBIND_RIGHT	=	SDLK_RIGHT;
 const SDLKey KEYBIND_UP		=	SDLK_UP;
 const SDLKey KEYBIND_DOWN	=	SDLK_DOWN;
 const SDLKey KEYBIND_JUMP	=	SDLK_SPACE;
+const SDLKey KEYBIND_ATTACK	=	SDLK_z;
 
 //PHYSICS CONSTANTS
-const float GRAVITY_ACC		=	200.0f;
-const float MAX_VX			=	45.0f;
-const float MAX_VY			=	300.0f;
-const float ZAX				=	100.0f;
-const float ZAY				=	200.0f;
-const float FRIC_X			=	30.0f;
+
+//horizontal movement
+const float FRIC_X			=	30.0f;		
+const float MAX_VX			=	45.0f;		//max speed
+const float ZAX				=	100.0f;		//acceleration
+
+//vertical movement
+const float GRAVITY_ACC		=	20.0f;		
+const float MAX_VY			=	300.0f;		//max speed
+const float ZAY				=	200.0f;		//acceleration
+const float JUMP_FUEL_MAX	=	20;
+const float JUMPCONSUMPTION	=	30;
+
+
 
 const float STARTING_X		=	150;
 const float STARTING_Y		=	150;
-const float JUMP_FUEL_MAX	=	50;
-const float JUMPCONSUMPTION	=	100;
+
 
 // STAGE BOUNDS
 const float LEFTWALL		=	50;

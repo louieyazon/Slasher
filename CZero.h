@@ -96,6 +96,7 @@ protected:
 	void accelerate_right();
 	void jump();
 	void breakjump();
+	void attack();
 
 public:
 	CZero();
