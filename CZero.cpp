@@ -35,7 +35,6 @@ CZero::CZero() : CGameObject() {
 	//animation
 	curFrame		= 0;
 	drawFrame		= 0;
-	frameForward	= true;
 	spriteTimeBetween = 1.0000/60.0000;
 	spriteTimeLast = sTime->GetTime();
 
@@ -61,6 +60,7 @@ void CZero::Update() {
 	Physics();
 	readState();
 	Animate();
+	lastZeroState = zeroState;
 }
 void CZero::Draw() {
 	GD4N::TVector2<int> drawPosition;
@@ -68,27 +68,17 @@ void CZero::Draw() {
 	drawPosition.y = position.y - 93;
 	sVideo->Draw(zeroTexture, drawPosition);
 }
-void CZero::Animate() {
-	
-	if(zeroState == STATE_STANDING) animZeroState = AS_STANDING;
-	if(zeroState == STATE_RUNNING) animZeroState = AS_RUNNING;
-	
-	forwardFrame();
-	decideFrame();
-	
-	lastZeroState = zeroState;
-	
-}
 
 void CZero::ReactToInput(){	
-	if(sInput->GetKey(KEYBIND_RIGHT))		{		accelerate_right();		}
-	if(sInput->GetKey(KEYBIND_LEFT))		{		accelerate_left();		}
-	if(sInput->GetKey(KEYBIND_JUMP))		{		jump();					}
-	else if(sInput->GetKeyUp(KEYBIND_JUMP)) {		breakjump();			}
+	if(sInput->GetKey(KEYBIND_RIGHT))				{		accelerate_right();		}
+	if(sInput->GetKey(KEYBIND_LEFT))				{		accelerate_left();		}
+	if(sInput->GetKey(KEYBIND_JUMP))				{		jump();					}
+	else if(sInput->GetKeyUp(KEYBIND_JUMP))			{		breakjump();			}
 
-	if(sInput->GetKey(KEYBIND_ATTACK))		{		attack();				}
+	if(sInput->GetKey(KEYBIND_ATTACK))				{		attack();				}
 	
-	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{	jumpfuel = jumpmax;			}
+	//prevent hopping (by holding jump key)
+	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{	jumpfuel = jumpmax;			}	//re-enable jumping only when jump key is released and player has landed on the ground
 }
 
 
@@ -152,22 +142,49 @@ void CZero::readState() {
 	
 	
 }
+void CZero::Animate() {
+	setAnimationState();
+	forwardFrame();
+	decideFrame();
+}
+
+void CZero::setAnimationState() {
+	if(zeroState == STATE_STANDING) animZeroState = AS_STANDING;
+	if(zeroState == STATE_RUNNING) animZeroState = AS_RUNNING;
+	
+	//going up
+	if(vy < 0) {
+		if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
+	}
+
+	if( (int)vy == 0 && falling) animZeroState = AS_JUMPTRANS;
+	//going down
+	if(vy > 0) {
+		if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
+	}
+
+
+
+}
+
 void CZero::forwardFrame() {
-	spriteTimeBetween = cycleFPS[animZeroState];				// set sprite update rate from array
+	spriteTimeBetween = aCycle[animZeroState].delay;				// set sprite update rate from array
 	if(spriteTimeLast + spriteTimeBetween < sTime->GetTime()){
 		spriteTimeLast = sTime->GetTime();
 		curFrame++;
 	}
 }
 void CZero::decideFrame() {
-	if(zeroState != lastZeroState) { curFrame = 0; } // reset curFrame to show first frame if animation state changed
-	int nMaxFrame = cycleFN[animZeroState];			 // 
-
-	if(curFrame >= nMaxFrame) curFrame = 0;			// return to first frame if max frame is reached
-
-	if(animZeroState == AS_STANDING) drawFrame = sfZeroStand[curFrame];
-	if(animZeroState == AS_RUNNING) drawFrame = sfZeroRun[curFrame];
+	if(zeroState != lastZeroState) { curFrame = 0; }			// reset curFrame to show first frame if animation state changed
+	int nMaxFrame = aCycle[animZeroState].numberOfFrames;		// 
+	if(curFrame >= nMaxFrame) nextAnimState();					// when the last frame is reached, play the next animation
+	drawFrame = aCycle[animZeroState].spriteFrame[curFrame];
 	zeroTexture->SetCurrentFrame(drawFrame);
+}
+
+void CZero::nextAnimState() {
+	curFrame = 0;
+	animZeroState = aCycle[animZeroState].nextAnimState;
 }
 
 // MOVES

@@ -14,7 +14,7 @@ const SDLKey KEYBIND_ATTACK	=	SDLK_z;
 
 //horizontal movement
 const float FRIC_X			=	30.0f;		
-const float MAX_VX			=	45.0f;		//max speed
+const float MAX_VX			=	43.0f;		//max speed
 const float ZAX				=	100.0f;		//acceleration
 
 //vertical movement
@@ -68,13 +68,5 @@ enum ZERO_STATES {
 	STATE_JUMPING,
 	STATE_RUNNING,
 };
-
-enum ZERO_ANIMSTATES {
-	AS_STANDING,
-	AS_STARTRUN,
-	AS_RUNNING,
-	AS_JUMPING
-};
-
 
 #endif
