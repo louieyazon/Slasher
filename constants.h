@@ -1,6 +1,9 @@
 #ifndef _constants_h
 #define _constants_h
 
+#define ZEROSPRITEOFFSET_X 88
+#define ZEROSPRITEOFFSET_Y 93
+
 
 //CONTROLS
 const SDLKey KEYBIND_LEFT	=	SDLK_LEFT;

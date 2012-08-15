@@ -64,8 +64,8 @@ void CZero::Update() {
 }
 void CZero::Draw() {
 	GD4N::TVector2<int> drawPosition;
-	drawPosition.x = position.x - 88;
-	drawPosition.y = position.y - 93;
+	drawPosition.x = position.x - ZEROSPRITEOFFSET_X;		//Zero object's position is located at the feet of the sprite.
+	drawPosition.y = position.y - ZEROSPRITEOFFSET_Y;
 	sVideo->Draw(zeroTexture, drawPosition);
 }
 
@@ -84,7 +84,7 @@ void CZero::ReactToInput(){
 
 // TIMER
 void CZero::timer() {
-	float nowTime = SDL_GetTicks() * 0.01f;
+	float nowTime = SDL_GetTicks() * 0.01f;		// i think it's better if we make an independent timer object and dt, a global variable so it can be universal.
 	dt = nowTime - previousTime;
 	previousTime = nowTime;	
 }
@@ -106,8 +106,8 @@ void CZero::bound() {
 		position.y = FLOORLEVEL;
 		vy = 0;
 		zeroState = STATE_STANDING;
+		animZeroState = AS_LANDING;	//animation modularity fail. let's try to figure this out later
 		falling = false;
-		animZeroState = AS_LANDING;
 	}
 }
 void CZero::friction() {
@@ -130,6 +130,11 @@ void CZero::gravity() {
 		vy += (dt * GRAVITY_ACC);
 	}
 }
+void CZero::boundme (int* val, int min, int max) {
+	if(*val > max) *val = max;
+	if(*val < min) *val = min;
+	if(*val < min || *val > max) { vx = 0.0f; }
+}
 
 // ANIMATION
 void CZero::readState() {
@@ -137,8 +142,7 @@ void CZero::readState() {
 	if(!falling){	//on the ground
 		int nvx = (vx * dt);
 		if(nvx == 0) {	zeroState = STATE_STANDING;	}		// not moving
-		else		 {	zeroState = STATE_RUNNING;	}		// moving
-			
+		else		 {	zeroState = STATE_RUNNING;	}		// moving		
 	}
 	
 	
@@ -150,19 +154,20 @@ void CZero::Animate() {
 }
 
 void CZero::setAnimationState() {
-	if(animZeroState != AS_LANDING) {
-		if(zeroState == STATE_STANDING) animZeroState = AS_STANDING;
+	if(zeroState == STATE_STANDING) {	// vx = 0
+		if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
+		if(animZeroState != AS_LANDING && animZeroState != AS_STOPRUN) animZeroState = AS_STANDING;
 	}
-	if(zeroState == STATE_RUNNING) animZeroState = AS_RUNNING;
-	
-	//going up
-	if(vy < 0) {
+	if(zeroState == STATE_RUNNING) {	// vx != 0
+		if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
+		if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
+	}
+	if(vy < 0) {			//going up
+		if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
 		if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
 	}
-	if( (int)vy == 0 && falling) animZeroState = AS_JUMPTRANS;
-
-	//going down
-	if(vy > 0) {
+	if( abs((int)vy) < 10 && falling && animZeroState == AS_RISING) animZeroState = AS_JUMPTRANS;
+	if(vy > 0) {			//going down
 		if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
 	}
 }
@@ -193,13 +198,13 @@ void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max); }
 
 void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max); }		//first statement accelerates vx; second statement limits maximum vx;
 void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max); }
+
 void CZero::jump()	{
 	if(jumpfuel > 0) {
 		if(!falling) {						//jump from ground
 			zeroState = STATE_JUMPING;
 			falling = true;
 			accelerate_up();
-			animZeroState != AS_JUMPOFF;
 		}
 		//continue upward acceleration
 		accelerate_up();
