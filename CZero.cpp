@@ -80,7 +80,13 @@ void CZero::ReactToInput(){
 	//prevent hopping (by holding jump key)
 	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{	jumpfuel = jumpmax;			}	//re-enable jumping only when jump key is released and player has landed on the ground
 }
-
+void CZero::readState() {
+	if(!falling){	//on the ground
+		int nvx = (vx * dt);
+		if(nvx == 0) {	zeroState = STATE_STANDING;	}		// not moving
+		else		 {	zeroState = STATE_RUNNING;	}		// moving		
+	}
+}
 
 // TIMER
 void CZero::timer() {
@@ -137,22 +143,11 @@ void CZero::boundme (int* val, int min, int max) {
 }
 
 // ANIMATION
-void CZero::readState() {
-	
-	if(!falling){	//on the ground
-		int nvx = (vx * dt);
-		if(nvx == 0) {	zeroState = STATE_STANDING;	}		// not moving
-		else		 {	zeroState = STATE_RUNNING;	}		// moving		
-	}
-	
-	
-}
 void CZero::Animate() {
 	setAnimationState();
 	forwardFrame();
 	decideFrame();
 }
-
 void CZero::setAnimationState() {
 	if(zeroState == STATE_STANDING) {	// vx = 0
 		if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
@@ -162,16 +157,15 @@ void CZero::setAnimationState() {
 		if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
 		if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
 	}
-	if(vy < 0) {			//going up
+	if(vy < 0) {						//going up
 		if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
 		if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
 	}
 	if( abs((int)vy) < 10 && falling && animZeroState == AS_RISING) animZeroState = AS_JUMPTRANS;
-	if(vy > 0) {			//going down
+	if(vy > 0) {						//going down
 		if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
 	}
 }
-
 void CZero::forwardFrame() {
 	spriteTimeBetween = aCycle[animZeroState].delay;				// set sprite update rate from array
 	if(spriteTimeLast + spriteTimeBetween < sTime->GetTime()){
@@ -186,18 +180,17 @@ void CZero::decideFrame() {
 	drawFrame = aCycle[animZeroState].spriteFrame[curFrame];
 	zeroTexture->SetCurrentFrame(drawFrame);
 }
-
 void CZero::nextAnimState() {
 	curFrame = 0;
 	animZeroState = aCycle[animZeroState].nextAnimState;
 }
 
 // MOVES
-void CZero::accelerate_up()    {	vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max); }
-void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max); }
+void CZero::accelerate_up()    {	vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
+void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
 
-void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max); }		//first statement accelerates vx; second statement limits maximum vx;
-void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max); }
+void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max);	}		//first statement accelerates vx; second statement limits maximum vx;
+void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max);	}
 
 void CZero::jump()	{
 	if(jumpfuel > 0) {
@@ -213,6 +206,12 @@ void CZero::jump()	{
 }
 void CZero::breakjump() {
 	jumpfuel = 0;
+}
+void CZero::dash() {
+	// TODO implement dash
+	// dash gives zero a short burst of forward acceleration in the direction he's facing
+	// (like a horizontal jump)
+	// the Physics > friction > grind function should probably take care of braking.
 }
 
 void CZero::attack() {

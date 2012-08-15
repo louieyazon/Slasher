@@ -64,9 +64,11 @@ protected:
 	void accelerate_down(); 
 	void accelerate_left(); 
 	void accelerate_right();
+	void dash();
 	void jump();
 	void breakjump();
 	void attack();
+	
 
 
 
