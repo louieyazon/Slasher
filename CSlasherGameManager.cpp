@@ -35,7 +35,7 @@ void CSlasherGameManager::LoadResources() {
 	*/
 	CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
 	CSurface::Load((char *)"images/bkgd.bmp", SURFID_BKGD);
-	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
+	//CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
 	sSurfacePool->CleanUp();
 }
 

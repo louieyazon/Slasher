@@ -1,7 +1,7 @@
 #ifndef _constants_h
 #define _constants_h
 
-const float GRAVITY_ACC = 50.00f;
+const float GRAVITY_ACC = 700.00f;
 
 enum SFX_IDS {
 };
@@ -33,7 +33,15 @@ enum GAMEOBJECT_TYPES {
 enum ZERO_STATES {
 	STATE_STANDING,
 	STATE_JUMPING,
-	STATE_WALKING_RIGHT,
-	STATE_WALKING_LEFT,
+	STATE_RUNNING,
 };
+
+enum ZERO_ANIMSTATES {
+	AS_STANDING,
+	AS_STARTRUN,
+	AS_RUNNING,
+	AS_JUMPING
+};
+
+
 #endif

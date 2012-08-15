@@ -10,7 +10,7 @@ CPlatform::~CPlatform() {
 }
 
 void CPlatform::Draw() {
-	sVideo->Draw(SURFID_PLATFORM);
+	//sVideo->Draw(SURFID_PLATFORM);
 }
 
 int CPlatform::GetHeight() {
