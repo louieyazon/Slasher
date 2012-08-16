@@ -78,9 +78,17 @@ void CZero::ReactToInput(){
 	if(sInput->GetKey(KEYBIND_ATTACK))				{		attack();				}
 	
 	//prevent hopping (by holding jump key)
-	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{	jumpfuel = jumpmax;			}	//re-enable jumping only when jump key is released and player has landed on the ground
+	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{		reenableJump();			}	//re-enable jumping only when jump key is released and player has landed on the ground
 }
+void CZero::disableJump() {
+	jumpfuel = 0;
+}
+void CZero::reenableJump() {
+	jumpfuel = jumpmax;
+}
+
 void CZero::readState() {
+	// this funnction's usefulness needs reevaluation
 	if(!falling){	//on the ground
 		int nvx = (vx * dt);
 		if(nvx == 0) {	zeroState = STATE_STANDING;	}		// not moving
@@ -103,17 +111,13 @@ void CZero::bound() {
 	
 	if(position.y > FLOORLEVEL) {					//	floor boundary
 		position.y = FLOORLEVEL;
-		vy = 0;
-		zeroState = STATE_STANDING;
-		animZeroState = AS_LANDING;	//animation modularity fail. let's try to figure this out later
-		falling = false;
+		land();										// stops gravity, removes vy, plays landing animation
 	}
 }
 void CZero::friction() {
 	grind(&vx);
 
 	//if( (int)(vx * dt * 100) == 0 ) vx = 0;
-
 	//if(vy < 0) grind(&vy);
 	gravity();
 }
@@ -134,6 +138,12 @@ void CZero::boundme (int* val, int min, int max) {
 	if(*val < min) *val = min;
 	if(*val < min || *val > max) { vx = 0.0f; }
 }
+void CZero::land() {
+	vy = 0;
+	zeroState = STATE_STANDING;
+	animZeroState = AS_LANDING;	
+	falling = false;
+}
 
 // ANIMATION
 void CZero::Animate() {
@@ -144,7 +154,18 @@ void CZero::Animate() {
 void CZero::setAnimationState() {
 	if(zeroState == STATE_STANDING) {	// vx = 0
 		if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
-		if(animZeroState != AS_LANDING && animZeroState != AS_STOPRUN) animZeroState = AS_STANDING;
+		if(
+			!(
+			animZeroState == AS_LANDING ||
+			animZeroState == AS_STOPRUN ||
+			animZeroState == AS_SLASH1 ||
+			animZeroState == AS_SLASH2 ||
+			animZeroState == AS_SLASH3 ||
+			animZeroState == AS_KEEPSABER
+			)
+			
+			) animZeroState = AS_STANDING;
+		
 	}
 	if(zeroState == STATE_RUNNING) {	// vx != 0
 		if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
@@ -181,7 +202,6 @@ void CZero::nextAnimState() {
 // MOVES
 void CZero::accelerate_up()    {	vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
 void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
-
 void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max);	}		//first statement accelerates vx; second statement limits maximum vx;
 void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max);	}
 
@@ -198,7 +218,7 @@ void CZero::jump()	{
 	}
 }
 void CZero::breakjump() {
-	jumpfuel = 0;
+	disableJump();
 }
 void CZero::dash() {
 	// TODO implement dash
@@ -212,6 +232,37 @@ void CZero::attack() {
 	// set state to attacking/slashing
 	// separate ground attack from air attack
 	// detect the COMBO TIME WINDOW
+	
+	
+	// ATTACK CONTROL LOGIC:
+	//
+	// (1) don't allow the triggering of successive attacks by holding the attack button. see jump-hopping prevention code for reference.
+	// (2) the next attack should only be allowed to trigger a short while after the current attack is triggered (COMBO TIME WINDOW)
+	// (3) zero should not be allowed to move sideways in the middle of an attack.
+	// (4) zero may jump at any point of the ground attack. this cancels the rest of the slash and allows him to do a normal jump.
+	// (5) zero may dash at any point of the ground attack.
+	// (6) 
+	// 
+	// ANIMATION-CENTRIC DUMMY ATTACK CONTROL LOGIC CODE. DO NOT USE AS IS.
+	if(!falling &&
+		(animZeroState == AS_STANDING ||		//these are the conditions when zero should be allowed to do a primary slash
+		animZeroState == AS_KEEPSABER ||
+		animZeroState == AS_LANDING ||
+		animZeroState == AS_RUNNING ||
+		animZeroState == AS_STARTRUN ||
+		animZeroState == AS_STOPRUN
+		)
+		) {
+			animZeroState = AS_SLASH1;
+	}
+	if(animZeroState == AS_SLASH1 && curFrame > 6) {
+		animZeroState = AS_SLASH2;
+		curFrame = 0;
+	}
+	if(animZeroState == AS_SLASH2 && curFrame > 6) {
+		animZeroState = AS_SLASH3;
+		curFrame = 0;
+	}
 }
 
 //COLLISIONS
@@ -231,6 +282,7 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 				!(position.x > platform->position.x &&							//Within platfrom x1, x2
 				position.x < (platform->position.x + platform->GetWidth()))	) {
 				falling = true;
+				disableJump();
 				return false;
 			} 
 			break;
@@ -242,9 +294,8 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
 		case TYPE_PLATFORM:
 			CPlatform* platform = dynamic_cast<CPlatform*>(other);
-			vy = 0;
-			falling = false;
 			position.y = platform->position.y;
+			land();
 			break;    
     };
 }

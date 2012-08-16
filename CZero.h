@@ -39,6 +39,7 @@ protected:
 
 	// nonposition object states
 	void readState();
+	
 	bool falling;					// falling tracks when to apply gravity (when you're jumping or not on the ground)
 	int zeroState;
 	int lastZeroState;				// probably won't need this anymore
@@ -64,7 +65,11 @@ protected:
 	void jump();
 	void breakjump();
 	void attack();
-	
+
+	//control logic
+	void disableJump();
+	void reenableJump();
+	void land();
 
 
 
@@ -126,9 +131,9 @@ const animPart aCycle[] = {
 		{ sizeof(sfZeroJT)/sizeof(int)		,	0.040f,		false	,	(int*)&sfZeroJT			, AS_FALLING	}, //zero jump transition
 		{ sizeof(sfZeroFall)/sizeof(int)	,	0.033f,		true	,	(int*)&sfZeroFall		, AS_FALLING	}, //zero falling
 		{ sizeof(sfZeroLand)/sizeof(int)	,	0.067f,		false	,	(int*)&sfZeroLand		, AS_STANDING	}, //zero landing
-		{ sizeof(sfZeroSlash1)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroSlash1		, AS_KEEPSABER	}, //zero slash1
-		{ sizeof(sfZeroSlash2)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroSlash2		, AS_KEEPSABER	}, //zero slash2
-		{ sizeof(sfZeroSlash3)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroSlash3		, AS_KEEPSABER	}, //zero slash3
+		{ sizeof(sfZeroSlash1)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash1		, AS_KEEPSABER	}, //zero slash1
+		{ sizeof(sfZeroSlash2)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash2		, AS_KEEPSABER	}, //zero slash2
+		{ sizeof(sfZeroSlash3)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash3		, AS_KEEPSABER	}, //zero slash3
 		{ sizeof(sfZeroKS)/sizeof(int)		,	0.033f,		false	,	(int*)&sfZeroKS			, AS_STANDING	} //zero keepsaber
 };
 
