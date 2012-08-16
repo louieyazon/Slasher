@@ -22,9 +22,10 @@ const float ZAX				=	100.0f;		//acceleration
 
 //vertical movement
 const float GRAVITY_ACC		=	20.0f;		
-const float MAX_VY			=	300.0f;		//max speed
+const float MAX_VY			=	600.0f;		//max speed
 const float ZAY				=	200.0f;		//acceleration
-const float JUMP_FUEL_MAX	=	20;
+const float ZJUMPY			=	1000.0f;
+const float JUMP_FUEL_MAX	=	120;
 const float JUMPCONSUMPTION	=	60;
 
 const float STARTING_X		=	150;

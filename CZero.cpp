@@ -200,7 +200,11 @@ void CZero::nextAnimState() {
 }
 
 // MOVES
-void CZero::accelerate_up()    {	vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
+void CZero::accelerate_up()    {	
+									vy = -ZJUMPY * dt;
+									//vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max);
+
+}
 void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
 void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max);	}		//first statement accelerates vx; second statement limits maximum vx;
 void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max);	}
@@ -210,7 +214,7 @@ void CZero::jump()	{
 		if(!falling) {						//jump from ground
 			zeroState = STATE_JUMPING;
 			falling = true;
-			accelerate_up();
+			//accelerate_up();
 		}
 		//continue upward acceleration
 		accelerate_up();
