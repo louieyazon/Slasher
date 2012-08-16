@@ -1,5 +1,6 @@
 #include <cmath>
 #include <ctime>
+#include <stdlib.h>
 
 void minmax (int* val, int min, int max) {
 	//this function keeps the value of the variable at address -val- between min and max
@@ -14,10 +15,10 @@ int signof(int x) {
 	if (x != 0) return (x / abs(x));
 	else return 0;
 }
-/*
+
 int randoValue(int min, int max) {
 	return (    (rand() % (max - min)) + min    );
-}*/
+}
 
 
 

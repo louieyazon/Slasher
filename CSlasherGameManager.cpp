@@ -6,6 +6,9 @@
 
 #include "CBGround.h"
 #include "CZero.h"
+#include "CPlatform.h"
+#include "CGameTimer.h"
+#include "CAsteroid.h"
 
 #include "constants.h"
 
@@ -35,11 +38,18 @@ void CSlasherGameManager::LoadResources() {
 	*/
 	CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
 	CSurface::Load((char *)"images/bkgd.bmp", SURFID_BKGD);
-	//CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
+	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
+	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
 	sSurfacePool->CleanUp();
 }
 
 void CSlasherGameManager::Scene00() {
+	new CGameTimer();
 	new CBGround();
+	new CPlatform(PLATFORM_1X, PLATFORM_1Y);
+	new CPlatform(PLATFORM_2X, PLATFORM_2Y);
+	new CPlatform(PLATFORM_3X, PLATFORM_3Y);
+	new CPlatform(PLATFORM_4X, PLATFORM_4Y);
+	new CAsteroid();
 	new CZero();
 }

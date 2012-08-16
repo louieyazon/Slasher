@@ -25,19 +25,34 @@ const float GRAVITY_ACC		=	20.0f;
 const float MAX_VY			=	300.0f;		//max speed
 const float ZAY				=	200.0f;		//acceleration
 const float JUMP_FUEL_MAX	=	20;
-const float JUMPCONSUMPTION	=	30;
-
-
+const float JUMPCONSUMPTION	=	60;
 
 const float STARTING_X		=	150;
 const float STARTING_Y		=	150;
 
+//asteroid constants
+const float MAX_AVX = 60.0f;
+const float MIN_AVX = 30.0f;
+const float ASPAWN_X = 800;
+const float HITPOS_X = -110;
+
+//PLATFORMS
+const int PLATFROM_HEIGHT	=	20;
+const int PLATFORM_WIDTH	=	80;
+
+const float PLATFORM_1X		=	200;
+const float PLATFORM_1Y		=	400;
+const float PLATFORM_2X		=	400;
+const float PLATFORM_2Y		=	300;
+const float PLATFORM_3X		=	100;
+const float PLATFORM_3Y		=	200;
+const float PLATFORM_4X		=	200;
+const float PLATFORM_4Y		=	50;
 
 // STAGE BOUNDS
 const float LEFTWALL		=	50;
 const float RIGHTWALL		=	750;
 const float FLOORLEVEL		=	500;
-
 
 enum SFX_IDS {
 };
@@ -49,6 +64,7 @@ enum SURFACE_IDS {
 	SURFID_ZERO,
 	SURFID_BKGD,
 	SURFID_PLATFORM,
+	SURFID_ASTEROID,
 };
 
 enum direction_t {
@@ -71,5 +87,9 @@ enum ZERO_STATES {
 	STATE_JUMPING,
 	STATE_RUNNING,
 };
+
+
+extern float previousTime;				// time of last update
+extern float dt;
 
 #endif

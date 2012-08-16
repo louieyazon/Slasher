@@ -8,6 +8,7 @@
 #include "CSlasherGameManager.h"
 #include "CZero.h"
 #include "SlasherUtil.h"
+#include "CPlatform.h"
 #include <cmath>
 
 CZero::CZero() : CGameObject() {
@@ -55,7 +56,6 @@ void CZero::Update() {
 	/*if(logicTimeLast + logicTimeBetween < sTime->GetTime()) {
 		logicTimeLast = sTime->GetTime();
 	}*/
-	timer();
 	ReactToInput();
 	Physics();
 	readState();
@@ -88,13 +88,6 @@ void CZero::readState() {
 	}
 }
 
-// TIMER
-void CZero::timer() {
-	float nowTime = SDL_GetTicks() * 0.01f;		// i think it's better if we make an independent timer object and dt, a global variable so it can be universal.
-	dt = nowTime - previousTime;
-	previousTime = nowTime;	
-}
-
 // PHYSICS
 void CZero::Physics() {
 	friction();
@@ -121,7 +114,7 @@ void CZero::friction() {
 
 	//if( (int)(vx * dt * 100) == 0 ) vx = 0;
 
-	if(vy < 0) grind(&vy);
+	//if(vy < 0) grind(&vy);
 	gravity();
 }
 
@@ -219,4 +212,39 @@ void CZero::attack() {
 	// set state to attacking/slashing
 	// separate ground attack from air attack
 	// detect the COMBO TIME WINDOW
+}
+
+//COLLISIONS
+bool CZero::IsCollidingWith(GD4N::CGameObject* other){
+	switch (other->GetType()) {
+		case TYPE_PLATFORM:
+			CPlatform* platform = dynamic_cast<CPlatform*>(other);
+			if(vy > 0 &&														//Going down
+				position.y > platform->position.y &&							//Under platform top
+				position.y < (platform->position.y + platform->GetHeight()) &&  //Over platform bottom
+				position.x > platform->position.x &&							//Within platfrom x1, x2
+				position.x < (platform->position.x + platform->GetWidth()) ) { 
+				return true;
+			} else if (
+				position.y+2 > platform->position.y &&							//Under platform top
+				position.y+2 < (platform->position.y + platform->GetHeight()) &&  //Over platform bottom
+				!(position.x > platform->position.x &&							//Within platfrom x1, x2
+				position.x < (platform->position.x + platform->GetWidth()))	) {
+				falling = true;
+				return false;
+			} 
+			break;
+	}
+	return false;
+}
+
+void CZero::CollidesWith(GD4N::CGameObject* other){
+	switch (other->GetType()) {
+		case TYPE_PLATFORM:
+			CPlatform* platform = dynamic_cast<CPlatform*>(other);
+			vy = 0;
+			falling = false;
+			position.y = platform->position.y;
+			break;    
+    };
 }

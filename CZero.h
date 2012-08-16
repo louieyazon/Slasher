@@ -14,8 +14,8 @@ protected:
 	void Animate();
 	void ReactToInput();
 	void Physics();
-	//bool IsCollidingWith(GD4N::CGameObject* other);
-    //void CollidesWith(GD4N::CGameObject* other);
+	bool IsCollidingWith(GD4N::CGameObject* other);
+    void CollidesWith(GD4N::CGameObject* other);
 	GD4N::TVector2<int> position;
 	GD4N::CSurfaceSheet *zeroTexture;
 	
@@ -44,11 +44,6 @@ protected:
 	int lastZeroState;				// probably won't need this anymore
 	float jumpfuel;	float jumpmax;	// jump limiter, also allows jumping of different heights
 
-	// timing
-	void timer();					// this function tracks time between updates
-	float previousTime;				// time of last update
-	float dt;						// difference in time between updates
-
 	// physics
 	float vy;	float vx;	float vx_max;	float vy_max;
 	float ay;	float ax;
@@ -58,6 +53,7 @@ protected:
 	void gravity();
 	void grind(float* v);
 	void boundme (int* val, int min, int max);
+	
 
 	// moves
 	void accelerate_up();
