@@ -50,6 +50,10 @@ CZero::CZero() : CGameObject() {
 
 	zeroTexture = new GD4N::CSurfaceSheet(SURFID_ZERO);
 	zeroTexture->SetSpriteDimensions(14,10);
+
+	zeroTextureL = new GD4N::CSurfaceSheet(SURFID_ZEROL);
+	zeroTextureL->SetSpriteDimensions(14,10);
+
 	zeroTexture->SetCurrentFrame(drawFrame);
 
 
@@ -73,7 +77,9 @@ void CZero::Draw() {
 	GD4N::TVector2<int> drawPosition;
 	drawPosition.x = position.x - ZEROSPRITEOFFSET_X;		//Zero object's position is located at the feet of the sprite.
 	drawPosition.y = position.y - ZEROSPRITEOFFSET_Y;
-	sVideo->Draw(zeroTexture, drawPosition);
+
+	if(facingRight)	sVideo->Draw(zeroTexture, drawPosition);
+	else sVideo->Draw(zeroTextureL, drawPosition);
 }
 
 void CZero::ReactToInput(){	
@@ -122,6 +128,10 @@ void CZero::readState() {
 		else					{	zeroState = STATE_DASHING;	}
 		if(dashfuel <= 0)		{	dashing = false;			}
 	}
+
+	if(dashing) {		vx_max = DASH_VX;		}
+	else		{		vx_max = MAX_VX;		}
+
 }
 
 // PHYSICS
@@ -131,7 +141,7 @@ void CZero::Physics() {
 	bound();
 }
 void CZero::move() {
-	if(!dashing) minmaxf(&vx, -vx_max, vx_max);
+	minmaxf(&vx, -vx_max, vx_max);
 	position.x += (vx * dt) + 0.5;			//+0.5 is to compensate for int-casting's fraction elimination
 	position.y += (vy * dt) + 0.5;			
 }
@@ -198,10 +208,13 @@ void CZero::setAnimationState() {
 		
 	}
 	if(dashing) {
-		if(animZeroState != AS_DASHING) animZeroState = AS_INTODASH;
+		if(animZeroState != AS_DASHING && !falling) animZeroState = AS_INTODASH;
+	}
+	if(!dashing && animZeroState == AS_DASHING) {
+		animZeroState = AS_BREAKING;
 	}
 
-	if(zeroState == STATE_RUNNING) {	// vx != 0
+	if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING) {	// vx != 0
 		if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
 		if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
 	}
@@ -228,7 +241,9 @@ void CZero::decideFrame() {
 	int nMaxFrame = aCycle[animZeroState].numberOfFrames;		// 
 	if(curFrame >= nMaxFrame) nextAnimState();					// when the last frame is reached, play the next animation
 	drawFrame = aCycle[animZeroState].spriteFrame[curFrame];
+
 	zeroTexture->SetCurrentFrame(drawFrame);
+	zeroTextureL->SetCurrentFrame(drawFrame);
 }
 void CZero::nextAnimState() {
 	curFrame = 0;
@@ -244,7 +259,7 @@ void CZero::accelerate_up()    {
 void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);							}
 void CZero::accelerate_left()	{	vx -= ax * dt; facingRight = false;	}		//first statement accelerates vx; second statement limits maximum vx;
 void CZero::accelerate_right()	{	vx += ax * dt; facingRight = true;		}
-void CZero::dashccelerate()		{	vx = ZDASH * dt * ((facingRight? 1 : -1));								}
+void CZero::dashccelerate()		{	vx += ZDASH * dt * ((facingRight? 1 : -1));								}
 
 void CZero::jump()	{
 	if(jumpfuel > 0) {
@@ -271,7 +286,6 @@ void CZero::dash() {
 		if(!dashing) {						//jump from ground
 			zeroState = STATE_DASHING;
 			dashing = true;
-			dashccelerate();
 		}
 		//continue upward acceleration
 		dashccelerate();

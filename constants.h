@@ -18,19 +18,20 @@ const SDLKey KEYBIND_ATTACK	=	SDLK_a;
 
 //horizontal movement
 const float FRIC_X			=	20.0f;		
-const float MAX_VX			=	40.0f;		//max speed
-const float ZAX				=	100.0f;		//acceleration
+const float MAX_VX			=	28.0f;		//max speed
+const float ZAX				=	40.0f;		//acceleration
 
 //vertical movement
 const float GRAVITY_ACC		=	20.0f;		
 const float MAX_VY			=	600.0f;		//max speed
-const float ZAY				=	200.0f;		//acceleration
+const float ZAY				=	40.0f;		//acceleration
 
 const float ZJUMPY			=	1200.0f;
 const float JUMP_FUEL_MAX	=	100;
 const float JUMPCONSUMPTION	=	60;
 
-const float ZDASH			=	1500.0f;
+const float ZDASH			=	100.0f;
+const float DASH_VX			=	40.0f;
 const float DASH_FUEL_MAX	=	260;
 const float DASHCONSUMPTION	=	60;
 
@@ -71,6 +72,7 @@ enum MUSIC_IDS {
 
 enum SURFACE_IDS {
 	SURFID_ZERO,
+	SURFID_ZEROL,
 	SURFID_BKGD,
 	SURFID_PLATFORM,
 	SURFID_ASTEROID,

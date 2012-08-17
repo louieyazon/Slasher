@@ -18,6 +18,7 @@ protected:
     void CollidesWith(GD4N::CGameObject* other);
 	GD4N::TVector2<int> position;
 	GD4N::CSurfaceSheet *zeroTexture;
+	GD4N::CSurfaceSheet *zeroTextureL;
 	
 	//float logicTimeLast;
 	//float logicTimeBetween;
@@ -129,7 +130,7 @@ const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94					};
 
 const int sfZeroIntoDash[] =	{	100, 101, 102, 103							};
 const int sfZeroDashing[] =		{	104, 105, 106								};
-const int sfZeroBreak[]	=		{	107, 108, 109, 110							};
+const int sfZeroBreak[]	=		{	107, 108, 109, 110, 110, 110				};
 
 const int sfZeroDSlash[] =		{	111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121};
 
@@ -161,7 +162,7 @@ const animPart aCycle[] = {
 		{ sizeof(sfZeroJSlash)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroJSlash		, AS_FALLING	}, //zero airslash
 		{ sizeof(sfZeroIntoDash)/sizeof(int),	0.033f,		false	,	(int*)&sfZeroIntoDash	, AS_DASHING	}, //zero into dash
 		{ sizeof(sfZeroDashing)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDashing	, AS_DASHING	}, //zero dashing
-		{ sizeof(sfZeroBreak)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroBreak		, AS_STANDING	}, //zero breaking
+		{ sizeof(sfZeroBreak)/sizeof(int)	,	0.040f,		false	,	(int*)&sfZeroBreak		, AS_STANDING	}, //zero breaking
 		{ sizeof(sfZeroDSlash)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDSlash		, AS_STANDING	} //zero dashing slash
 };
 
