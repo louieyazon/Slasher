@@ -41,9 +41,13 @@ protected:
 	void readState();
 	
 	bool falling;					// falling tracks when to apply gravity (when you're jumping or not on the ground)
+	bool dashing;
+	bool facingRight;
+
 	int zeroState;
 	int lastZeroState;				// probably won't need this anymore
 	float jumpfuel;	float jumpmax;	// jump limiter, also allows jumping of different heights
+	float dashfuel; float dashmax;	// dash limiter, also allows dashing of different distances
 
 	// physics
 	float vy;	float vx;	float vx_max;	float vy_max;
@@ -61,6 +65,9 @@ protected:
 	void accelerate_down(); 
 	void accelerate_left(); 
 	void accelerate_right();
+	void dashccelerate();
+	void undash();
+
 	void dash();
 	void jump();
 	void breakjump();
@@ -70,6 +77,9 @@ protected:
 	void disableJump();
 	void reenableJump();
 	void land();
+
+	void disableDash();
+	void reenableDash();
 
 
 
@@ -93,6 +103,10 @@ enum ZERO_ANIMSTATES {
 	AS_SLASH2		= 10,
 	AS_SLASH3		= 11,
 	AS_KEEPSABER	= 12,
+	AS_AIRSLASH		= 13,
+	AS_INTODASH		= 14,
+	AS_DASHING		= 15,
+	AS_BREAKING		= 16
 };
 
 const int sfZeroStand[]		 =	{	20,20,20,21,22,22,22,21						};
@@ -110,6 +124,15 @@ const int sfZeroRise[] =		{	72,73										};
 const int sfZeroJT[] =			{	74,75,76,77,78							 	};
 const int sfZeroFall[] =		{	79,80,81									};
 const int sfZeroLand[] =		{	82,83,84,85									};
+const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94					};
+
+
+const int sfZeroIntoDash[] =	{	100, 101, 102, 103							};
+const int sfZeroDashing[] =		{	104, 105, 106								};
+const int sfZeroBreak[]	=		{	107, 108, 109, 110							};
+
+const int sfZeroDSlash[] =		{	111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121};
+
 
 
 typedef struct animationsegment {
@@ -134,9 +157,12 @@ const animPart aCycle[] = {
 		{ sizeof(sfZeroSlash1)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash1		, AS_KEEPSABER	}, //zero slash1
 		{ sizeof(sfZeroSlash2)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash2		, AS_KEEPSABER	}, //zero slash2
 		{ sizeof(sfZeroSlash3)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash3		, AS_KEEPSABER	}, //zero slash3
-		{ sizeof(sfZeroKS)/sizeof(int)		,	0.033f,		false	,	(int*)&sfZeroKS			, AS_STANDING	} //zero keepsaber
+		{ sizeof(sfZeroKS)/sizeof(int)		,	0.033f,		false	,	(int*)&sfZeroKS			, AS_STANDING	}, //zero keepsaber
+		{ sizeof(sfZeroJSlash)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroJSlash		, AS_FALLING	}, //zero airslash
+		{ sizeof(sfZeroIntoDash)/sizeof(int),	0.033f,		false	,	(int*)&sfZeroIntoDash	, AS_DASHING	}, //zero into dash
+		{ sizeof(sfZeroDashing)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDashing	, AS_DASHING	}, //zero dashing
+		{ sizeof(sfZeroBreak)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroBreak		, AS_STANDING	}, //zero breaking
+		{ sizeof(sfZeroDSlash)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDSlash		, AS_STANDING	} //zero dashing slash
 };
-
-
 
 #endif

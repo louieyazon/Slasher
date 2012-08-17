@@ -15,15 +15,22 @@ CZero::CZero() : CGameObject() {
 	//PHYSICS
 	position.x		= STARTING_X;
 	position.y		= STARTING_Y;
+	facingRight		= true;
 	vy				= 0;
 	vx				= 0;
 	vx_max			= MAX_VX;
 	vy_max			= MAX_VY;
 	ay				= ZAY;
 	ax				= ZAX;
+
 	jumpmax			= JUMP_FUEL_MAX;
 	jumpfuel		= jumpmax;
+
+	dashmax			= DASH_FUEL_MAX;
+	dashfuel		= dashmax;
+
 	falling			= true;
+	dashing			= false;
 	previousTime	= SDL_GetTicks() * 0.01f;
 
 	zeroState		= STATE_STANDING;
@@ -42,7 +49,7 @@ CZero::CZero() : CGameObject() {
 
 
 	zeroTexture = new GD4N::CSurfaceSheet(SURFID_ZERO);
-	zeroTexture->SetSpriteDimensions(12,10);
+	zeroTexture->SetSpriteDimensions(14,10);
 	zeroTexture->SetCurrentFrame(drawFrame);
 
 
@@ -70,15 +77,26 @@ void CZero::Draw() {
 }
 
 void CZero::ReactToInput(){	
-	if(sInput->GetKey(KEYBIND_RIGHT))				{		accelerate_right();		}
-	if(sInput->GetKey(KEYBIND_LEFT))				{		accelerate_left();		}
+	if(!dashing || (falling && dashing)) {
+		if(sInput->GetKey(KEYBIND_RIGHT))			{		accelerate_right();		}
+		if(sInput->GetKey(KEYBIND_LEFT))			{		accelerate_left();		}
+	}
+
 	if(sInput->GetKey(KEYBIND_JUMP))				{		jump();					}
 	else if(sInput->GetKeyUp(KEYBIND_JUMP))			{		breakjump();			}
+	
+	if(!falling) {																		//ground-only controls
+		if(sInput->GetKey(KEYBIND_DASH))			{		dash();					}
+	}
+	if(sInput->GetKeyUp(KEYBIND_DASH))			{		undash();				}
+
+	
 
 	if(sInput->GetKey(KEYBIND_ATTACK))				{		attack();				}
 	
 	//prevent hopping (by holding jump key)
 	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{		reenableJump();			}	//re-enable jumping only when jump key is released and player has landed on the ground
+	if(!sInput->GetKey(KEYBIND_DASH) && !dashing)	{		reenableDash();			}	//re-enable jumping only when jump key is released and player has landed on the ground
 }
 void CZero::disableJump() {
 	jumpfuel = 0;
@@ -86,13 +104,23 @@ void CZero::disableJump() {
 void CZero::reenableJump() {
 	jumpfuel = jumpmax;
 }
+void CZero::disableDash() {
+	dashfuel = 0;
+}
+void CZero::reenableDash() {
+	dashfuel = dashmax;
+	dashing = false;
+}
+
 
 void CZero::readState() {
 	// this funnction's usefulness needs reevaluation
 	if(!falling){	//on the ground
 		int nvx = (vx * dt);
-		if(nvx == 0) {	zeroState = STATE_STANDING;	}		// not moving
-		else		 {	zeroState = STATE_RUNNING;	}		// moving		
+		if(nvx == 0)			{	zeroState = STATE_STANDING;	}		// not moving
+		else if(!dashing)		{	zeroState = STATE_RUNNING;	}		// moving		
+		else					{	zeroState = STATE_DASHING;	}
+		if(dashfuel <= 0)		{	dashing = false;			}
 	}
 }
 
@@ -103,8 +131,9 @@ void CZero::Physics() {
 	bound();
 }
 void CZero::move() {
-	position.x += vx * dt;
-	position.y += vy * dt;
+	if(!dashing) minmaxf(&vx, -vx_max, vx_max);
+	position.x += (vx * dt) + 0.5;			//+0.5 is to compensate for int-casting's fraction elimination
+	position.y += (vy * dt) + 0.5;			
 }
 void CZero::bound() {
 	boundme(&position.x, LEFTWALL, RIGHTWALL);		//	left-right boundaries
@@ -161,23 +190,30 @@ void CZero::setAnimationState() {
 			animZeroState == AS_SLASH1 ||
 			animZeroState == AS_SLASH2 ||
 			animZeroState == AS_SLASH3 ||
-			animZeroState == AS_KEEPSABER
+			animZeroState == AS_KEEPSABER ||
+			animZeroState == AS_BREAKING
 			)
 			
 			) animZeroState = AS_STANDING;
 		
 	}
+	if(dashing) {
+		if(animZeroState != AS_DASHING) animZeroState = AS_INTODASH;
+	}
+
 	if(zeroState == STATE_RUNNING) {	// vx != 0
 		if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
 		if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
 	}
-	if(vy < 0) {						//going up
-		if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
-		if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
-	}
-	if( abs((int)vy) < 10 && falling && animZeroState == AS_RISING) animZeroState = AS_JUMPTRANS;
-	if(vy > 0) {						//going down
-		if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
+	if(animZeroState != AS_AIRSLASH) {
+		if(vy < 0) {						//going up
+			if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
+			if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
+		}
+		if( abs((int)vy) < 10 && falling && animZeroState == AS_RISING) animZeroState = AS_JUMPTRANS;
+		if(vy > 0) {						//going down
+			if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
+		}
 	}
 }
 void CZero::forwardFrame() {
@@ -205,9 +241,10 @@ void CZero::accelerate_up()    {
 									//vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max);
 
 }
-void CZero::accelerate_down()  {	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);	}
-void CZero::accelerate_left()  {	vx -= ax * dt; minmaxf(&vx, -vx_max, vx_max);	}		//first statement accelerates vx; second statement limits maximum vx;
-void CZero::accelerate_right() {	vx += ax * dt; minmaxf(&vx, -vx_max, vx_max);	}
+void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);							}
+void CZero::accelerate_left()	{	vx -= ax * dt; facingRight = false;	}		//first statement accelerates vx; second statement limits maximum vx;
+void CZero::accelerate_right()	{	vx += ax * dt; facingRight = true;		}
+void CZero::dashccelerate()		{	vx = ZDASH * dt * ((facingRight? 1 : -1));								}
 
 void CZero::jump()	{
 	if(jumpfuel > 0) {
@@ -229,6 +266,20 @@ void CZero::dash() {
 	// dash gives zero a short burst of forward acceleration in the direction he's facing
 	// (like a horizontal jump)
 	// the Physics > friction > grind function should probably take care of braking.
+
+	if(dashfuel > 0) {
+		if(!dashing) {						//jump from ground
+			zeroState = STATE_DASHING;
+			dashing = true;
+			dashccelerate();
+		}
+		//continue upward acceleration
+		dashccelerate();
+		dashfuel -= DASHCONSUMPTION * dt;
+	}
+}
+void CZero::undash() {
+	disableDash();
 }
 
 void CZero::attack() {
@@ -259,6 +310,10 @@ void CZero::attack() {
 		) {
 			animZeroState = AS_SLASH1;
 	}
+	if (falling &&
+		animZeroState != AS_AIRSLASH) {
+			animZeroState = AS_AIRSLASH;
+	}
 	if(animZeroState == AS_SLASH1 && curFrame > 6) {
 		animZeroState = AS_SLASH2;
 		curFrame = 0;
@@ -267,6 +322,8 @@ void CZero::attack() {
 		animZeroState = AS_SLASH3;
 		curFrame = 0;
 	}
+	
+
 }
 
 //COLLISIONS

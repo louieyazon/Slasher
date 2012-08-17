@@ -10,13 +10,14 @@ const SDLKey KEYBIND_LEFT	=	SDLK_LEFT;
 const SDLKey KEYBIND_RIGHT	=	SDLK_RIGHT;
 const SDLKey KEYBIND_UP		=	SDLK_UP;
 const SDLKey KEYBIND_DOWN	=	SDLK_DOWN;
-const SDLKey KEYBIND_JUMP	=	SDLK_SPACE;
-const SDLKey KEYBIND_ATTACK	=	SDLK_z;
+const SDLKey KEYBIND_JUMP	=	SDLK_s;
+const SDLKey KEYBIND_DASH	=	SDLK_w;
+const SDLKey KEYBIND_ATTACK	=	SDLK_a;
 
 //PHYSICS CONSTANTS
 
 //horizontal movement
-const float FRIC_X			=	30.0f;		
+const float FRIC_X			=	20.0f;		
 const float MAX_VX			=	40.0f;		//max speed
 const float ZAX				=	100.0f;		//acceleration
 
@@ -24,9 +25,16 @@ const float ZAX				=	100.0f;		//acceleration
 const float GRAVITY_ACC		=	20.0f;		
 const float MAX_VY			=	600.0f;		//max speed
 const float ZAY				=	200.0f;		//acceleration
-const float ZJUMPY			=	1000.0f;
-const float JUMP_FUEL_MAX	=	120;
+
+const float ZJUMPY			=	1200.0f;
+const float JUMP_FUEL_MAX	=	100;
 const float JUMPCONSUMPTION	=	60;
+
+const float ZDASH			=	1500.0f;
+const float DASH_FUEL_MAX	=	260;
+const float DASHCONSUMPTION	=	60;
+
+
 
 const float STARTING_X		=	150;
 const float STARTING_Y		=	150;
@@ -86,6 +94,7 @@ enum GAMEOBJECT_TYPES {
 enum ZERO_STATES {
 	STATE_STANDING,
 	STATE_JUMPING,
+	STATE_DASHING,
 	STATE_RUNNING,
 };
 
