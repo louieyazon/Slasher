@@ -9,6 +9,7 @@
 #include "CPlatform.h"
 #include "CGameTimer.h"
 #include "CAsteroid.h"
+#include "CZUILifebar.h"
 
 #include "constants.h"
 
@@ -41,6 +42,7 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
 	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
+	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
 	sSurfacePool->CleanUp();
 }
 
@@ -53,4 +55,5 @@ void CSlasherGameManager::Scene00() {
 	new CPlatform(PLATFORM_4X, PLATFORM_4Y);
 	new CAsteroid();
 	new CZero();
+	new CZUILifebar();
 }

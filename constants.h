@@ -35,8 +35,6 @@ const float DASH_VX			=	40.0f;
 const float DASH_FUEL_MAX	=	260;
 const float DASHCONSUMPTION	=	60;
 
-
-
 const float STARTING_X		=	150;
 const float STARTING_Y		=	150;
 
@@ -50,19 +48,26 @@ const float HITPOS_X = -110;
 const int PLATFROM_HEIGHT	=	20;
 const int PLATFORM_WIDTH	=	80;
 
-const float PLATFORM_1X		=	200;
-const float PLATFORM_1Y		=	400;
-const float PLATFORM_2X		=	400;
-const float PLATFORM_2Y		=	300;
-const float PLATFORM_3X		=	100;
-const float PLATFORM_3Y		=	200;
-const float PLATFORM_4X		=	200;
-const float PLATFORM_4Y		=	50;
+const float PLATFORM_1X		=	200;		const float PLATFORM_1Y		=	400;
+const float PLATFORM_2X		=	400;		const float PLATFORM_2Y		=	300;
+const float PLATFORM_3X		=	100;		const float PLATFORM_3Y		=	200;
+const float PLATFORM_4X		=	200;		const float PLATFORM_4Y		=	50;
 
 // STAGE BOUNDS
 const float LEFTWALL		=	50;
 const float RIGHTWALL		=	750;
 const float FLOORLEVEL		=	500;
+
+//UI POSITIONS	
+const int LIFEBAR_X				= 150;
+const int LIFEBAR_Y				= 510;
+const int LIFEBAR_SPRITEHEIGHT	= 12;
+const int LIFEBAR_MAXSPRITEY	= 500 - LIFEBAR_SPRITEHEIGHT;
+const float LIFEBAR_UPDATERATE	= 0.033f;
+const int LIFEBAR_MAXWIDTH		= 300;
+
+
+
 
 enum SFX_IDS {
 };
@@ -76,6 +81,10 @@ enum SURFACE_IDS {
 	SURFID_BKGD,
 	SURFID_PLATFORM,
 	SURFID_ASTEROID,
+	
+	//UI STUFF
+	SURFID_LIFEBAR,
+	SUFTID_LIFECONTAINER
 };
 
 enum direction_t {

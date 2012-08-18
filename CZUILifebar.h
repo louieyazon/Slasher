@@ -1,0 +1,31 @@
+#ifndef _CZUILifebar_h
+#define _CZUILifebar_h
+
+#include "TVector2.h"
+#include "CGameObject.h"
+
+class CZUILifebar: public GD4N::CGameObject {
+protected:
+	void Draw();
+	void Update();
+
+	int maxwidth;
+	float lifeTargetPercent;
+	float updateDelay;
+	
+public:
+	CZUILifebar();
+	~CZUILifebar();
+	int width;
+	int height;
+
+	void setTargetPercent(float x);
+	void decreaseTargetPercent(float x);
+
+	int GetHeight();
+	int	GetWidth();
+	GD4N::TVector2<int> position;
+	GD4N::TVector2<int> srcposition;
+};
+
+#endif
