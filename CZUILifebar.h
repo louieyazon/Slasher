@@ -9,8 +9,13 @@ protected:
 	void Draw();
 	void Update();
 
+	void equalize();
+
 	int maxwidth;
 	float lifeTargetPercent;
+	
+	//effects
+	bool flashing;
 	float updateDelay;
 	
 public:
@@ -23,6 +28,7 @@ public:
 	void decreaseTargetPercent(float x);
 
 	GD4N::TVector2<int> position;
+	GD4N::TVector2<int> targetsrcposition;
 	GD4N::TVector2<int> srcposition;
 	GD4N::TVector2<int> srcposition_lag;
 };

@@ -46,8 +46,6 @@ CZero::CZero() : CGameObject() {
 	spriteTimeBetween = 1.0000/60.0000;
 	spriteTimeLast = sTime->GetTime();
 
-
-
 	zeroTexture = new GD4N::CSurfaceSheet(SURFID_ZERO);
 	zeroTexture->SetSpriteDimensions(14,10);
 
@@ -60,7 +58,9 @@ CZero::CZero() : CGameObject() {
 }
 CZero::~CZero() {
 	delete zeroTexture;
+	delete zeroTextureL;
 	zeroTexture = 0;
+	zeroTextureL = 0;
 }
 
 void CZero::Update() {
@@ -232,7 +232,7 @@ void CZero::setAnimationState() {
 void CZero::forwardFrame() {
 	spriteTimeBetween = aCycle[animZeroState].delay;				// set sprite update rate from array
 	float timeGap = sTime->GetTime() - spriteTimeLast;
-
+	
 	if(timeGap > spriteTimeBetween){
 		spriteTimeLast = sTime->GetTime();
 		curFrame++;
