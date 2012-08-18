@@ -38,7 +38,7 @@ void CZUILifebar::Draw() {
 
 void CZUILifebar::Update() {
 	if(	(rand() % 200)	==	1) {		//take random damage at random intervals for testing
-		int dmg = rand() % 10;
+		int dmg = rand() % 15;
 		decreaseTargetPercent(dmg);	
 	}
 
@@ -49,7 +49,7 @@ void CZUILifebar::Update() {
 void CZUILifebar::setTargetPercent(float x) {
 	lifeTargetPercent = x;
 	//if (lifeTargetPercent <= 0) lifeTargetPercent = 0;		real code
-	if (lifeTargetPercent <= 0) {lifeTargetPercent = 100;	srcposition_lag.y = 0;}			//DEBUG CODE
+	if (lifeTargetPercent <= 0) {	lifeTargetPercent = 100;	srcposition.y = 0;	srcposition_lag.y = 0;	}			//DEBUG CODE
 }
 
 void CZUILifebar::decreaseTargetPercent(float d) {
