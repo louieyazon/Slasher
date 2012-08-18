@@ -43,6 +43,7 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
 	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
+	CSurface::Load((char *)"images/lifebar_diff.png", SURFID_LIFEBARDIFF);
 	sSurfacePool->CleanUp();
 }
 

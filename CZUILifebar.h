@@ -22,10 +22,9 @@ public:
 	void setTargetPercent(float x);
 	void decreaseTargetPercent(float x);
 
-	int GetHeight();
-	int	GetWidth();
 	GD4N::TVector2<int> position;
 	GD4N::TVector2<int> srcposition;
+	GD4N::TVector2<int> srcposition_lag;
 };
 
 #endif
