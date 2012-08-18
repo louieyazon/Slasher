@@ -26,7 +26,7 @@ const float GRAVITY_ACC		=	20.0f;
 const float MAX_VY			=	600.0f;		//max speed
 const float ZAY				=	40.0f;		//acceleration
 
-const float ZJUMPY			=	1200.0f;
+const float ZJUMPY			=	1200.0f;	//this seems to be too big on slow computers, i wonder how to fix it.
 const float JUMP_FUEL_MAX	=	100;
 const float JUMPCONSUMPTION	=	60;
 

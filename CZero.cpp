@@ -231,9 +231,12 @@ void CZero::setAnimationState() {
 }
 void CZero::forwardFrame() {
 	spriteTimeBetween = aCycle[animZeroState].delay;				// set sprite update rate from array
-	if(spriteTimeLast + spriteTimeBetween < sTime->GetTime()){
+	float timeGap = sTime->GetTime() - spriteTimeLast;
+
+	if(timeGap > spriteTimeBetween){
 		spriteTimeLast = sTime->GetTime();
 		curFrame++;
+		if(timeGap > spriteTimeBetween * 2) curFrame++;			// frameskip 1
 	}
 }
 void CZero::decideFrame() {
@@ -253,8 +256,8 @@ void CZero::nextAnimState() {
 // MOVES
 void CZero::accelerate_up()    {	
 									vy = -ZJUMPY * dt;
-									//vy -= ay * dt; minmaxf(&vy, -vy_max, vy_max);
-
+									//vy -= ay * dt;
+									minmaxf(&vy, -vy_max, vy_max);
 }
 void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);							}
 void CZero::accelerate_left()	{	vx -= ax * dt; facingRight = false;	}		//first statement accelerates vx; second statement limits maximum vx;
