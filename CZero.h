@@ -11,6 +11,9 @@ class CZero: public GD4N::CGameObject {
 protected:
 	void Update();
 	void Draw();
+	void DrawDebug();
+	void debugNumber(const int x, const int y, const int digits, const int* number);
+	void debugNumber(const int x, const int y, const int digits, const float* number);
 	void Animate();
 	void ReactToInput();
 	void Physics();
@@ -19,6 +22,9 @@ protected:
 	GD4N::TVector2<int> position;
 	GD4N::CSurfaceSheet *zeroTexture;
 	GD4N::CSurfaceSheet *zeroTextureL;
+
+	GD4N::CSurfaceSheet *UINumbersTexture;
+
 	
 	//float logicTimeLast;
 	//float logicTimeBetween;

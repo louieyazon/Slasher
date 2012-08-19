@@ -46,6 +46,9 @@ CZero::CZero() : CGameObject() {
 	spriteTimeBetween = 1.0000/60.0000;
 	spriteTimeLast = sTime->GetTime();
 
+	UINumbersTexture = new GD4N::CSurfaceSheet(SURFID_UINUMBERS);
+	UINumbersTexture->SetSpriteDimensions(1,12);
+
 	zeroTexture = new GD4N::CSurfaceSheet(SURFID_ZERO);
 	zeroTexture->SetSpriteDimensions(14,10);
 
@@ -80,12 +83,18 @@ void CZero::Draw() {
 
 	if(facingRight)	sVideo->Draw(zeroTexture, drawPosition);
 	else sVideo->Draw(zeroTextureL, drawPosition);
+
+	DrawDebug();											//draw debug numbers;
 }
 
 void CZero::ReactToInput(){	
+
 	if(!dashing || (falling && dashing)) {
-		if(sInput->GetKey(KEYBIND_RIGHT))			{		accelerate_right();		}
-		if(sInput->GetKey(KEYBIND_LEFT))			{		accelerate_left();		}
+		if(animZeroState != AS_SLASH1 && animZeroState != AS_SLASH2 && animZeroState != AS_SLASH3) {		//DUMMY CODE: remove this after animation-centric code is removed
+			if(sInput->GetKey(KEYBIND_RIGHT))			{		accelerate_right();		}
+			if(sInput->GetKey(KEYBIND_LEFT))			{		accelerate_left();		}
+		}
+
 	}
 
 	if(sInput->GetKey(KEYBIND_JUMP))				{		jump();					}
@@ -94,7 +103,7 @@ void CZero::ReactToInput(){
 	if(!falling) {																		//ground-only controls
 		if(sInput->GetKey(KEYBIND_DASH))			{		dash();					}
 	}
-	if(sInput->GetKeyUp(KEYBIND_DASH))			{		undash();				}
+	if(sInput->GetKeyUp(KEYBIND_DASH))				{		undash();				}
 
 	
 
@@ -208,19 +217,22 @@ void CZero::setAnimationState() {
 			) animZeroState = AS_STANDING;
 		
 	}
-	if(dashing) {
-		if(animZeroState != AS_DASHING && !falling) animZeroState = AS_INTODASH;
-	}
-	if(!dashing && animZeroState == AS_DASHING) {
-		animZeroState = AS_BREAKING;
-		sAudio->PlaySound(SFXID_ZSKID);
-	}
 
-	if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING) {	// vx != 0
-		if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
-		if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
-	}
+
+
 	if(animZeroState != AS_AIRSLASH) {
+		if(dashing) {
+			if(animZeroState != AS_DASHING && !falling) animZeroState = AS_INTODASH;
+		}
+		if(!dashing && animZeroState == AS_DASHING) {
+			animZeroState = AS_BREAKING;
+			sAudio->PlaySound(SFXID_ZSKID);
+		}
+
+		if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING) {	// vx != 0
+			if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
+			if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
+		}
 		if(vy < 0) {						//going up
 			if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
 			if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
@@ -230,6 +242,7 @@ void CZero::setAnimationState() {
 			if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
 		}
 	}
+
 }
 void CZero::forwardFrame() {
 	spriteTimeBetween = aCycle[animZeroState].delay;				// set sprite update rate from array
@@ -316,11 +329,12 @@ void CZero::attack() {
 	// (1) don't allow the triggering of successive attacks by holding the attack button. see jump-hopping prevention code for reference.
 	// (2) the next attack should only be allowed to trigger a short while after the current attack is triggered (COMBO TIME WINDOW)
 	// (3) zero should not be allowed to move sideways in the middle of an attack.
-	// (4) zero may jump at any point of the ground attack. this cancels the rest of the slash and allows him to do a normal jump.
-	// (5) zero may dash at any point of the ground attack.
-	// (6) 
+	// (4) you may trigger an attack while walking, but you should not be able to walk again while in the middle of an attack.
+	// (5) zero may jump at any point of the ground attack. this cancels the rest of the slash and allows him to do a normal jump.
+	// (6) zero may dash at any point of the ground attack.
+	
 	// 
-	// ANIMATION-CENTRIC DUMMY ATTACK CONTROL LOGIC CODE. DO NOT USE AS IS.
+	// ANIMATION-CENTRIC DUMMY ATTACK CONTROL LOGIC CODE. DO NOT USE AS IS BECAUSE THIS IS REALLY BUGGY.
 	if(!falling &&
 		(animZeroState == AS_STANDING ||		//these are the conditions when zero should be allowed to do a primary slash
 		animZeroState == AS_KEEPSABER ||
@@ -332,21 +346,25 @@ void CZero::attack() {
 		) {
 			animZeroState = AS_SLASH1;
 			sAudio->PlaySound(SFXID_ZSLASH1);
+			spriteTimeLast = sTime->GetTime();
 	}
 	if (falling &&
 		animZeroState != AS_AIRSLASH) {
 			animZeroState = AS_AIRSLASH;
+			curFrame = 0;
 			sAudio->PlaySound(SFXID_ZSLASHAIR);
 	}
 	if(animZeroState == AS_SLASH1 && curFrame > 6) {
 		animZeroState = AS_SLASH2;
 		sAudio->PlaySound(SFXID_ZSLASH2);
 		curFrame = 0;
+		spriteTimeLast = sTime->GetTime();
 	}
 	if(animZeroState == AS_SLASH2 && curFrame > 6) {
 		animZeroState = AS_SLASH3;
 		sAudio->PlaySound(SFXID_ZSLASH3);
 		curFrame = 0;
+		spriteTimeLast = sTime->GetTime();
 	}
 	
 
@@ -385,4 +403,41 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 			land();
 			break;    
     };
+}
+
+
+void CZero::DrawDebug(){
+
+	debugNumber(200, 550, 3, &jumpfuel);
+	debugNumber(250, 550, 3, &position.x);
+	debugNumber(290, 550, 3, &position.y);
+
+	debugNumber(250, 570, 4, &vx);
+	debugNumber(290, 570, 4, &vy);
+
+
+
+}
+
+void CZero::debugNumber(const int x, const int y, const int digits, const int* number){
+	GD4N::TVector2<int> digitpos;
+	digitpos.x = x;
+	digitpos.y = y;
+	int digitVal = 1;
+	int powdigit = 1;
+
+	int numtoshow = abs(*number);
+
+	for(int dig = 0; dig < digits; dig++) {
+		digitVal = (int)(numtoshow / powdigit) % 10;
+		digitpos.x = x - (dig * 8);
+		UINumbersTexture->SetCurrentFrame(digitVal);
+		sVideo->Draw(UINumbersTexture, digitpos);
+		powdigit *= 10;
+	}
+}
+
+void CZero::debugNumber(const int x, const int y, const int digits, const float* number){
+	int debugfloat = *number;
+	debugNumber(x, y, digits, &debugfloat);
 }

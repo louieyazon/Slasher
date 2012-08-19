@@ -61,6 +61,7 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/lifebar_white.png", SURFID_LIFEBARWHITE);
 	CSurface::Load((char *)"images/zeroportraitbar.png", SURFID_ZEROPORTRAIT);
 	CSurface::Load((char *)"images/lifebar_holder.png", SURFID_LIFECONTAINER);
+	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
 	sSurfacePool->CleanUp();
 }
 
