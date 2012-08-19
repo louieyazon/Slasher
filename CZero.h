@@ -61,6 +61,7 @@ protected:
 	// physics
 	float vy;	float vx;	float vx_max;	float vy_max;
 	float ay;	float ax;
+	float fricx;
 	void move();
 	void bound();
 	void friction();
@@ -138,7 +139,7 @@ const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94,81				};
 
 const int sfZeroIntoDash[] =	{	100, 101, 102, 103							};
 const int sfZeroDashing[] =		{	104, 105, 106								};
-const int sfZeroBreak[]	=		{	107, 108, 109, 110, 110, 110				};
+const int sfZeroBreak[]	=		{	107, 108, 109, 110, 110, 110, 110	};
 
 const int sfZeroDSlash[] =		{	111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121};
 
@@ -166,11 +167,11 @@ const animPart aCycle[] = {
 		{ sizeof(sfZeroSlash1)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash1		, AS_KEEPSABER	}, //zero slash1
 		{ sizeof(sfZeroSlash2)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash2		, AS_KEEPSABER	}, //zero slash2
 		{ sizeof(sfZeroSlash3)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroSlash3		, AS_KEEPSABER	}, //zero slash3
-		{ sizeof(sfZeroKS)/sizeof(int)		,	0.033f,		false	,	(int*)&sfZeroKS			, AS_STANDING	}, //zero keepsaber
+		{ sizeof(sfZeroKS)/sizeof(int)		,	0.040f,		false	,	(int*)&sfZeroKS			, AS_STANDING	}, //zero keepsaber
 		{ sizeof(sfZeroJSlash)/sizeof(int)	,	0.02f,		false	,	(int*)&sfZeroJSlash		, AS_FALLING	}, //zero airslash
 		{ sizeof(sfZeroIntoDash)/sizeof(int),	0.033f,		false	,	(int*)&sfZeroIntoDash	, AS_DASHING	}, //zero into dash
 		{ sizeof(sfZeroDashing)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDashing	, AS_DASHING	}, //zero dashing
-		{ sizeof(sfZeroBreak)/sizeof(int)	,	0.040f,		false	,	(int*)&sfZeroBreak		, AS_STANDING	}, //zero breaking
+		{ sizeof(sfZeroBreak)/sizeof(int)	,	0.035f,		false	,	(int*)&sfZeroBreak		, AS_STANDING	}, //zero breaking
 		{ sizeof(sfZeroDSlash)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDSlash		, AS_STANDING	} //zero dashing slash
 };
 

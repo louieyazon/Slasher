@@ -19,9 +19,9 @@ const SDLKey KEYBIND_ATTACK	=	SDLK_a;
 //PHYSICS CONSTANTS
 
 //horizontal movement
-const float FRIC_X			=	20.0f;		
+const float FRIC_X			=	17.0f;		
 const float MAX_VX			=	28.0f;		//max speed
-const float ZAX				=	40.0f;		//acceleration
+const float ZAX				=	30.0f;		//acceleration
 
 //vertical movement
 const float GRAVITY_ACC		=	20.0f;		
@@ -33,12 +33,12 @@ const float JUMP_FUEL_MAX	=	900;
 const float JUMPCONSUMPTION	=	450;
 
 const float ZDASH			=	100.0f;
-const float DASH_VX			=	40.0f;
+const float DASH_VX			=	45.0f;
 const float DASH_FUEL_MAX	=	260;
 const float DASHCONSUMPTION	=	60;
 
 const float STARTING_X		=	150;
-const float STARTING_Y		=	150;
+const float STARTING_Y		=	-100;
 
 //asteroid constants
 const float MAX_AVX = 60.0f;
@@ -58,11 +58,11 @@ const float PLATFORM_4X		=	300;		const float PLATFORM_4Y		=	150;
 // STAGE BOUNDS
 const float LEFTWALL		=	50;
 const float RIGHTWALL		=	750;
-const float FLOORLEVEL		=	500;
+const float FLOORLEVEL		=	490;
 
 //UI POSITIONS	
 const int LIFEBAR_X				= 150;
-const int LIFEBAR_Y				= 530;
+const int LIFEBAR_Y				= 50;
 const int LIFEBAR_SPRITEHEIGHT	= 12;
 const int LIFEBAR_MAXSPRITEY	= 500 - LIFEBAR_SPRITEHEIGHT;
 const float LIFEBAR_UPDATERATE	= 0.033f;

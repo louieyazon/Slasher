@@ -43,7 +43,6 @@ void CSlasherGameManager::LoadResources() {
 	CChunk::Load((char*)"sfx/explode_weak.wav", SFXID_ZSLASHHIT);
 	CChunk::Load((char*)"sfx/zero_x4_hurt.wav", SFXID_HURT);
 	CChunk::Load((char*)"sfx/ready.wav", SFXID_READY);
-
 	sChunkPool->CleanUp();
 
 	/*

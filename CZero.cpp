@@ -22,6 +22,7 @@ CZero::CZero() : CGameObject() {
 	vy_max			= MAX_VY;
 	ay				= ZAY;
 	ax				= ZAX;
+	fricx			= FRIC_X;
 
 	jumpmax			= JUMP_FUEL_MAX;
 	jumpfuel		= jumpmax;
@@ -129,19 +130,21 @@ void CZero::reenableDash() {
 
 
 void CZero::readState() {
-	// this funnction's usefulness needs reevaluation
 	if(!falling){	//on the ground
-		int nvx = (vx * dt * 2);
+		int nvx = (vx * dt);
 		if(nvx == 0)			{	zeroState = STATE_STANDING;	}		// not moving
 		else if(!dashing)		{	zeroState = STATE_RUNNING;	}		// moving		
 		else					{	zeroState = STATE_DASHING;	}
+
 		if(dashfuel <= 0)		{	dashing = false;			}
 	}
 
-	if(falling && vy > 0) {
-		disableJump();
+	
+	if(falling) { // in air
+		if(vy > 0) disableJump();
 	}
 
+	//falling-landing independent
 	if(dashing) {		vx_max = DASH_VX;		}
 	else		{		vx_max = MAX_VX;		}
 
@@ -167,6 +170,9 @@ void CZero::bound() {
 	}
 }
 void CZero::friction() {
+	if (falling) fricx = FRIC_X/3;
+	else fricx = FRIC_X;
+		
 	grind(&vx);
 
 	//if( (int)(vx * dt * 100) == 0 ) vx = 0;
@@ -176,7 +182,7 @@ void CZero::friction() {
 
 void CZero::grind(float* v) {
 	float vel = *v;
-	float newMagnitude = (  abs(vel) - (FRIC_X * dt)  );
+	float newMagnitude = (  abs(vel) - (fricx * dt)  );
 	if(newMagnitude < 0) newMagnitude = 0;
 	*v = signof(vel) * newMagnitude;
 }
@@ -205,48 +211,41 @@ void CZero::Animate() {
 	decideFrame();
 }
 void CZero::setAnimationState() {
-	if(zeroState == STATE_STANDING) {	// vx = 0
-		if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
-		if(
-			!(
-			animZeroState == AS_LANDING ||
-			animZeroState == AS_STOPRUN ||
-			animZeroState == AS_SLASH1 ||
-			animZeroState == AS_SLASH2 ||
-			animZeroState == AS_SLASH3 ||
-			animZeroState == AS_KEEPSABER ||
-			animZeroState == AS_BREAKING
-			)
-			
-			) animZeroState = AS_STANDING;
-		
-	}
 
 
 
-	if(animZeroState != AS_AIRSLASH) {
-		if(dashing) {
-			if(animZeroState != AS_DASHING && !falling) animZeroState = AS_INTODASH;
+	if(!falling){		//ground animations
+		if(zeroState == STATE_STANDING) {	// vx = 0
+			if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
 		}
-		if(!dashing && animZeroState == AS_DASHING) {
+
+		if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING && !dashing) {	// vx != 0
+			if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
+			if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
+		}
+		
+		if(dashing) {
+			if(animZeroState != AS_DASHING) animZeroState = AS_INTODASH;
+		} else if (!dashing && animZeroState == AS_DASHING) {
 			animZeroState = AS_BREAKING;
 			sAudio->PlaySound(SFXID_ZSKID);
 		}
 
-		if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING) {	// vx != 0
-			if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
-			if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
-		}
-		if(vy < 0) {						//going up
-			if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
-			if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
-		}
-		if( abs((int)vy) < 10 && falling && animZeroState == AS_RISING) animZeroState = AS_JUMPTRANS;
-		if(vy > 0) {						//going down
-			if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
-		}
+		
 	}
 
+	if(falling){		//air animations
+		if(animZeroState != AS_AIRSLASH) {
+			if(vy < 0) {						//going up
+				if (animZeroState == AS_STANDING) animZeroState = AS_JUMPOFF;
+				if (animZeroState != AS_JUMPOFF) animZeroState = AS_RISING;
+			}
+			if( abs((int)vy) < 10 && falling && animZeroState == AS_RISING) animZeroState = AS_JUMPTRANS;
+			if(vy > 0) {						//going down
+				if (animZeroState != AS_JUMPTRANS) animZeroState = AS_FALLING;
+			}
+		}
+	}
 }
 void CZero::forwardFrame() {
 	spriteTimeBetween = aCycle[animZeroState].delay;				// set sprite update rate from array
@@ -289,6 +288,7 @@ void CZero::jump()	{
 		if(!falling) {						//jump from ground
 			zeroState = STATE_JUMPING;
 			falling = true;
+			undash();
 			if(rand() % 2 == 1) sAudio->PlaySound(SFXID_ZJUMP);
 			else sAudio->PlaySound(SFXID_ZJUMP2);
 		}
