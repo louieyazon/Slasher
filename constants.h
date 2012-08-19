@@ -5,6 +5,8 @@
 #define ZEROSPRITEOFFSET_Y 93
 
 
+const bool SHOW_DEBUG_NUMBERS = true;
+
 //CONTROLS
 const SDLKey KEYBIND_LEFT	=	SDLK_LEFT;
 const SDLKey KEYBIND_RIGHT	=	SDLK_RIGHT;
@@ -27,8 +29,8 @@ const float MAX_VY			=	600.0f;		//max speed
 const float ZAY				=	40.0f;		//acceleration
 
 const float ZJUMPY			=	1200.0f;	//this seems to be too big on slow computers, i wonder how to fix it.
-const float JUMP_FUEL_MAX	=	999;
-const float JUMPCONSUMPTION	=	100;
+const float JUMP_FUEL_MAX	=	900;
+const float JUMPCONSUMPTION	=	450;
 
 const float ZDASH			=	100.0f;
 const float DASH_VX			=	40.0f;

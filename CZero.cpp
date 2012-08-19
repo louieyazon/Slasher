@@ -84,7 +84,7 @@ void CZero::Draw() {
 	if(facingRight)	sVideo->Draw(zeroTexture, drawPosition);
 	else sVideo->Draw(zeroTextureL, drawPosition);
 
-	DrawDebug();											//draw debug numbers;
+	if(SHOW_DEBUG_NUMBERS) DrawDebug();											//draw debug numbers;
 }
 
 void CZero::ReactToInput(){	
@@ -131,11 +131,15 @@ void CZero::reenableDash() {
 void CZero::readState() {
 	// this funnction's usefulness needs reevaluation
 	if(!falling){	//on the ground
-		int nvx = (vx * dt);
+		int nvx = (vx * dt * 2);
 		if(nvx == 0)			{	zeroState = STATE_STANDING;	}		// not moving
 		else if(!dashing)		{	zeroState = STATE_RUNNING;	}		// moving		
 		else					{	zeroState = STATE_DASHING;	}
 		if(dashfuel <= 0)		{	dashing = false;			}
+	}
+
+	if(falling && vy > 0) {
+		disableJump();
 	}
 
 	if(dashing) {		vx_max = DASH_VX;		}
@@ -354,13 +358,13 @@ void CZero::attack() {
 			curFrame = 0;
 			sAudio->PlaySound(SFXID_ZSLASHAIR);
 	}
-	if(animZeroState == AS_SLASH1 && curFrame > 6) {
+	if(animZeroState == AS_SLASH1 && curFrame > 7) {
 		animZeroState = AS_SLASH2;
 		sAudio->PlaySound(SFXID_ZSLASH2);
 		curFrame = 0;
 		spriteTimeLast = sTime->GetTime();
 	}
-	if(animZeroState == AS_SLASH2 && curFrame > 6) {
+	if(animZeroState == AS_SLASH2 && curFrame > 7) {
 		animZeroState = AS_SLASH3;
 		sAudio->PlaySound(SFXID_ZSLASH3);
 		curFrame = 0;
@@ -387,7 +391,7 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 				!(position.x > platform->position.x &&							//Within platfrom x1, x2
 				position.x < (platform->position.x + platform->GetWidth()))	) {
 				falling = true;
-				disableJump();
+				//disableJump();
 				return false;
 			} 
 			break;
@@ -405,15 +409,31 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
     };
 }
 
-
+// DEBUG NUMBERS
 void CZero::DrawDebug(){
 
-	debugNumber(200, 550, 3, &jumpfuel);
-	debugNumber(250, 550, 3, &position.x);
-	debugNumber(290, 550, 3, &position.y);
+	debugNumber(250, 550, 3, &jumpfuel);
 
-	debugNumber(250, 570, 4, &vx);
-	debugNumber(290, 570, 4, &vy);
+	//speed + position debug
+	debugNumber(350, 550, 3, &position.x);
+	debugNumber(390, 550, 3, &position.y);
+	debugNumber(350, 570, 3, &vx);
+	debugNumber(390, 570, 3, &vy);
+
+	//sprite animator debug
+	debugNumber(230, 570, 2, &animZeroState);
+	drawSlashAfter(230, 570);
+	debugNumber(250, 570, 2, &curFrame);
+	int checkspritetime = spriteTimeBetween * 1000;
+	debugNumber(290, 570, 3, &checkspritetime);
+
+	
+
+	//timer debug
+	int checktime = sTime->GetTime();
+	debugNumber(450,550, 3, &checktime);
+	int checkdt = dt * 1000;
+	debugNumber(500,550, 4, &checkdt);
 
 
 
@@ -430,11 +450,19 @@ void CZero::debugNumber(const int x, const int y, const int digits, const int* n
 
 	for(int dig = 0; dig < digits; dig++) {
 		digitVal = (int)(numtoshow / powdigit) % 10;
-		digitpos.x = x - (dig * 8);
+		digitpos.x = x - (dig * 7);
 		UINumbersTexture->SetCurrentFrame(digitVal);
 		sVideo->Draw(UINumbersTexture, digitpos);
 		powdigit *= 10;
 	}
+}
+
+void CZero::drawSlashAfter(const int x, const int y) {
+	GD4N::TVector2<int> digitpos;
+	digitpos.x = x + 6;
+	digitpos.y = y;
+	UINumbersTexture->SetCurrentFrame(10);
+	sVideo->Draw(UINumbersTexture, digitpos);
 }
 
 void CZero::debugNumber(const int x, const int y, const int digits, const float* number){

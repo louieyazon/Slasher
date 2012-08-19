@@ -11,9 +11,7 @@ class CZero: public GD4N::CGameObject {
 protected:
 	void Update();
 	void Draw();
-	void DrawDebug();
-	void debugNumber(const int x, const int y, const int digits, const int* number);
-	void debugNumber(const int x, const int y, const int digits, const float* number);
+	
 	void Animate();
 	void ReactToInput();
 	void Physics();
@@ -23,6 +21,10 @@ protected:
 	GD4N::CSurfaceSheet *zeroTexture;
 	GD4N::CSurfaceSheet *zeroTextureL;
 
+	void DrawDebug();
+	void debugNumber(const int x, const int y, const int digits, const int* number);
+	void drawSlashAfter(const int x, const int y);
+	void debugNumber(const int x, const int y, const int digits, const float* number);
 	GD4N::CSurfaceSheet *UINumbersTexture;
 
 	
@@ -131,7 +133,7 @@ const int sfZeroRise[] =		{	72,73										};
 const int sfZeroJT[] =			{	74,75,76,77,78							 	};
 const int sfZeroFall[] =		{	79,80,81									};
 const int sfZeroLand[] =		{	82,83,84,85									};
-const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94					};
+const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94,81				};
 
 
 const int sfZeroIntoDash[] =	{	100, 101, 102, 103							};

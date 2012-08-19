@@ -53,7 +53,6 @@ void CSlasherGameManager::LoadResources() {
 	*/
 	CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
 	CSurface::Load((char *)"images/Zero_l.png", SURFID_ZEROL);
-	CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
 	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
@@ -62,6 +61,11 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/zeroportraitbar.png", SURFID_ZEROPORTRAIT);
 	CSurface::Load((char *)"images/lifebar_holder.png", SURFID_LIFECONTAINER);
 	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
+	if(SHOW_DEBUG_NUMBERS) {
+		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
+	} else {
+		CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
+	}
 	sSurfacePool->CleanUp();
 }
 
