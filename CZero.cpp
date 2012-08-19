@@ -182,6 +182,7 @@ void CZero::land() {
 	zeroState = STATE_STANDING;
 	animZeroState = AS_LANDING;	
 	falling = false;
+	sAudio->PlaySound(SFXID_ZLAND);
 }
 
 // ANIMATION
@@ -212,6 +213,7 @@ void CZero::setAnimationState() {
 	}
 	if(!dashing && animZeroState == AS_DASHING) {
 		animZeroState = AS_BREAKING;
+		sAudio->PlaySound(SFXID_ZSKID);
 	}
 
 	if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING) {	// vx != 0
@@ -251,6 +253,7 @@ void CZero::decideFrame() {
 void CZero::nextAnimState() {
 	curFrame = 0;
 	animZeroState = aCycle[animZeroState].nextAnimState;
+	
 }
 
 // MOVES
@@ -269,7 +272,8 @@ void CZero::jump()	{
 		if(!falling) {						//jump from ground
 			zeroState = STATE_JUMPING;
 			falling = true;
-			//accelerate_up();
+			if(rand() % 2 == 1) sAudio->PlaySound(SFXID_ZJUMP);
+			else sAudio->PlaySound(SFXID_ZJUMP2);
 		}
 		//continue upward acceleration
 		accelerate_up();
@@ -289,6 +293,7 @@ void CZero::dash() {
 		if(!dashing) {						//jump from ground
 			zeroState = STATE_DASHING;
 			dashing = true;
+			sAudio->PlaySound(SFXID_ZDASH);
 		}
 		//continue upward acceleration
 		dashccelerate();
@@ -326,17 +331,21 @@ void CZero::attack() {
 		)
 		) {
 			animZeroState = AS_SLASH1;
+			sAudio->PlaySound(SFXID_ZSLASH1);
 	}
 	if (falling &&
 		animZeroState != AS_AIRSLASH) {
 			animZeroState = AS_AIRSLASH;
+			sAudio->PlaySound(SFXID_ZSLASHAIR);
 	}
 	if(animZeroState == AS_SLASH1 && curFrame > 6) {
 		animZeroState = AS_SLASH2;
+		sAudio->PlaySound(SFXID_ZSLASH2);
 		curFrame = 0;
 	}
 	if(animZeroState == AS_SLASH2 && curFrame > 6) {
 		animZeroState = AS_SLASH3;
+		sAudio->PlaySound(SFXID_ZSLASH3);
 		curFrame = 0;
 	}
 	
