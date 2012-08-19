@@ -45,13 +45,13 @@ const float ASPAWN_X = 800;
 const float HITPOS_X = -110;
 
 //PLATFORMS
-const int PLATFROM_HEIGHT	=	20;
-const int PLATFORM_WIDTH	=	80;
+const int PLATFROM_HEIGHT	=	35;
+const int PLATFORM_WIDTH	=	100;
 
 const float PLATFORM_1X		=	200;		const float PLATFORM_1Y		=	400;
 const float PLATFORM_2X		=	400;		const float PLATFORM_2Y		=	300;
-const float PLATFORM_3X		=	100;		const float PLATFORM_3Y		=	200;
-const float PLATFORM_4X		=	200;		const float PLATFORM_4Y		=	50;
+const float PLATFORM_3X		=	100;		const float PLATFORM_3Y		=	250;
+const float PLATFORM_4X		=	300;		const float PLATFORM_4Y		=	150;
 
 // STAGE BOUNDS
 const float LEFTWALL		=	50;
@@ -60,7 +60,7 @@ const float FLOORLEVEL		=	500;
 
 //UI POSITIONS	
 const int LIFEBAR_X				= 150;
-const int LIFEBAR_Y				= 510;
+const int LIFEBAR_Y				= 530;
 const int LIFEBAR_SPRITEHEIGHT	= 12;
 const int LIFEBAR_MAXSPRITEY	= 500 - LIFEBAR_SPRITEHEIGHT;
 const float LIFEBAR_UPDATERATE	= 0.033f;
@@ -86,7 +86,8 @@ enum SURFACE_IDS {
 	SURFID_LIFEBAR,
 	SURFID_LIFEBARDIFF,
 	SURFID_LIFEBARWHITE,
-	SUFTID_LIFECONTAINER
+	SURFID_LIFECONTAINER,
+	SURFID_ZEROPORTRAIT
 };
 
 enum direction_t {

@@ -28,6 +28,8 @@ public:
 	void decreaseTargetPercent(float x);
 
 	GD4N::TVector2<int> position;
+	GD4N::TVector2<int> positionContainer;
+	GD4N::TVector2<int> positionPortrait;
 	GD4N::TVector2<int> targetsrcposition;
 	GD4N::TVector2<int> srcposition;
 	GD4N::TVector2<int> srcposition_lag;

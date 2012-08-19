@@ -15,6 +15,12 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 	targetsrcposition.x		= 0;
 	targetsrcposition.y		= 0;
 
+	positionContainer.x		= position.x - 5;
+	positionContainer.y		= position.y - 4;
+
+	positionPortrait.x		= position.x - 100;
+	positionPortrait.y		= position.y - 55;
+
 	maxwidth				= LIFEBAR_MAXWIDTH;
 	flashing					= false;
 
@@ -36,13 +42,16 @@ CZUILifebar::~CZUILifebar() {
 
 //sVideo->Draw(SURFID_LIFEBAR, position); base statement
 void CZUILifebar::Draw() {
-	
-	sVideo->Draw(SURFID_LIFEBARDIFF, position, srcposition_lag, width, height);
-	sVideo->Draw(SURFID_LIFEBAR, position, srcposition, width, height);
+	sVideo->Draw(SURFID_LIFECONTAINER, positionContainer);									// LIFEBAR HOLDER
+	sVideo->Draw(SURFID_LIFEBARDIFF, position, srcposition_lag, width, height);				// RED LAGGING LIFEBAR
+	sVideo->Draw(SURFID_LIFEBAR, position, srcposition, width, height);						// ACTUAL LIFEBAR
 	if (flashing) {
-		sVideo->Draw(SURFID_LIFEBARWHITE, position, srcposition_lag, width, height);
+		sVideo->Draw(SURFID_LIFEBARWHITE, position, srcposition_lag, width, height);		//LIFEBAR EFFECTS
 		flashing = false;
 	}
+
+
+	sVideo->Draw(SURFID_ZEROPORTRAIT, positionPortrait);									// ZERO PORTRAIT
 
 }
 
