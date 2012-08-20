@@ -58,6 +58,8 @@ CZero::CZero() : CGameObject() {
 
 	zeroTexture->SetCurrentFrame(drawFrame);
 
+	sAudio->PlaySound(SFXID_READY);
+
 
 }
 CZero::~CZero() {
@@ -208,6 +210,17 @@ void CZero::Animate() {
 	setAnimationState();
 	forwardFrame();
 	decideFrame();
+	
+}
+void CZero::frameSound() {
+	if(animZeroState == AS_RUNNING) {
+		if(curFrame == 2)	sAudio->PlaySound(SFXID_STEP1);
+		else if(curFrame == 9)	sAudio->PlaySound(SFXID_STEP2);
+	}
+
+	if(curFrame == 0) {			//sounds played at start of animation
+
+	}
 }
 void CZero::setAnimationState() {
 	if(!falling){		//ground animations
@@ -251,6 +264,7 @@ void CZero::forwardFrame() {
 		spriteTimeLast = sTime->GetTime();
 		curFrame++;
 		if(timeGap > spriteTimeBetween * 2) curFrame++;			// frameskip 1
+		frameSound();
 	}
 }
 void CZero::decideFrame() {
@@ -409,6 +423,7 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 void CZero::DrawDebug(){
 
 	debugNumber(250, 550, 3, &jumpfuel);
+	debugNumber(290, 550, 3, &dashfuel);
 
 	//speed + position debug
 	debugNumber(350, 550, 3, &position.x);

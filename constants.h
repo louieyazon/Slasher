@@ -38,7 +38,7 @@ const float DASH_FUEL_MAX	=	260;
 const float DASHCONSUMPTION	=	60;
 
 const float STARTING_X		=	150;
-const float STARTING_Y		=	-100;
+const float STARTING_Y		=	-300;
 
 //asteroid constants
 const float MAX_AVX = 60.0f;
@@ -83,6 +83,8 @@ enum SFX_IDS {
 	SFXID_ZSLASHHIT,
 	SFXID_HURT,
 	SFXID_READY,
+	SFXID_STEP1,
+	SFXID_STEP2,
 };
 
 enum MUSIC_IDS {

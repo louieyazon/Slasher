@@ -41,6 +41,7 @@ protected:
 	void forwardFrame();
 	void decideFrame();
 	void nextAnimState();
+	void frameSound();
 
 	
 	int animZeroState;
