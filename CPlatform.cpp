@@ -4,18 +4,23 @@
 
 CPlatform::CPlatform(int x, int y) : CGameObject() {
 	type = TYPE_PLATFORM;
-	position.x		= x;
-	position.y		= y;
-	
-	height = PLATFROM_HEIGHT;
+	height = PLATFORM_HEIGHT;
 	width = PLATFORM_WIDTH;
+	
+	position.x		= x + (width/2);
+	position.y		= y - (height/2);
+	
+	
 }
 
 CPlatform::~CPlatform() {
 }
 
 void CPlatform::Draw() {
-	sVideo->Draw(SURFID_PLATFORM, position);
+	GD4N::TVector2<int> drawposition;
+	drawposition.x = position.x - (width/2);
+	drawposition.y = position.y;
+	sVideo->Draw(SURFID_PLATFORM, drawposition);
 }
 
 int CPlatform::GetHeight() {

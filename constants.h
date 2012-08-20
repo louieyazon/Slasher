@@ -21,7 +21,7 @@ const SDLKey KEYBIND_ATTACK	=	SDLK_a;
 //horizontal movement
 const float FRIC_X			=	17.0f;		
 const float MAX_VX			=	28.0f;		//max speed
-const float ZAX				=	30.0f;		//acceleration
+const float ZAX				=	40.0f;		//acceleration
 
 //vertical movement
 const float GRAVITY_ACC		=	20.0f;		
@@ -47,8 +47,7 @@ const float ASPAWN_X = 800;
 const float HITPOS_X = -110;
 
 //PLATFORMS
-const int PLATFROM_HEIGHT	=	35;
-const int PLATFORM_WIDTH	=	100;
+const int PLATFORM_WIDTH	=	110;		const int PLATFORM_HEIGHT	=	35;
 
 const float PLATFORM_1X		=	200;		const float PLATFORM_1Y		=	400;
 const float PLATFORM_2X		=	400;		const float PLATFORM_2Y		=	300;
@@ -56,9 +55,9 @@ const float PLATFORM_3X		=	100;		const float PLATFORM_3Y		=	250;
 const float PLATFORM_4X		=	300;		const float PLATFORM_4Y		=	150;
 
 // STAGE BOUNDS
-const float LEFTWALL		=	50;
-const float RIGHTWALL		=	750;
-const float FLOORLEVEL		=	490;
+#define LEFTWALL	50.0
+#define RIGHTWALL	750.0
+#define FLOORLEVEL	490.0
 
 //UI POSITIONS	
 const int LIFEBAR_X				= 150;

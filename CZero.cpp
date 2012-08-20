@@ -278,10 +278,10 @@ void CZero::accelerate_up()    {
 									//vy -= ay * dt;
 									minmaxf(&vy, -vy_max, vy_max);
 }
-void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);							}
-void CZero::accelerate_left()	{	vx -= ax * dt; facingRight = false;	}		//first statement accelerates vx; second statement limits maximum vx;
-void CZero::accelerate_right()	{	vx += ax * dt; facingRight = true;		}
-void CZero::dashccelerate()		{	vx += ZDASH * dt * ((facingRight? 1 : -1));								}
+void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);		}
+void CZero::accelerate_left()	{	vx -= ax * dt; facingRight = false;					}
+void CZero::accelerate_right()	{	vx += ax * dt; facingRight = true;					}
+void CZero::dashccelerate()		{	vx += ZDASH * dt * ((facingRight? 1 : -1));			}
 
 void CZero::jump()	{
 	if(jumpfuel > 0) {
@@ -379,19 +379,19 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
 		case TYPE_PLATFORM:
 			CPlatform* platform = dynamic_cast<CPlatform*>(other);
-			if(vy > 0 &&														//Going down
-				position.y > platform->position.y &&							//Under platform top
-				position.y < (platform->position.y + platform->GetHeight()) &&  //Over platform bottom
-				position.x > platform->position.x &&							//Within platfrom x1, x2
-				position.x < (platform->position.x + platform->GetWidth()) ) { 
+
+			int diffpos_x = position.x - platform->position.x;						// + if position.value is greater
+			int diffpos_y = position.y - platform->position.y;						// - if position.value is less
+			int diffpos_yUnder = (position.y + 2) - platform->position.y;
+
+			bool isYCollide			=	abs(diffpos_y) < platform->GetHeight()/2;		// y within platform rectangle
+			bool isXCollide			=	abs(diffpos_x) < platform->GetWidth()/2;		// within width of platform
+			bool isYCollideUnder	=	abs(diffpos_yUnder) < platform->GetHeight()/2;
+				
+			if(vy > 0	&&	isYCollide	&& isXCollide) {	// going down & position.xy is within platform rectangle
 				return true;
-			} else if (
-				position.y+2 > platform->position.y &&							//Under platform top
-				position.y+2 < (platform->position.y + platform->GetHeight()) &&  //Over platform bottom
-				!(position.x > platform->position.x &&							//Within platfrom x1, x2
-				position.x < (platform->position.x + platform->GetWidth()))	) {
+			} else if (isYCollideUnder && !isXCollide) {	// position.x not within platform width & position.y is right above platform rectangle.
 				falling = true;
-				//disableJump();
 				return false;
 			} 
 			break;

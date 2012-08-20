@@ -50,8 +50,7 @@ void CSlasherGameManager::LoadResources() {
 	CMusic::Load((char*)"music/02-Molly.mp3", MUSICID_02);
 	sMusicPool->CleanUp();
 	*/
-	CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
-	CSurface::Load((char *)"images/Zero_l.png", SURFID_ZEROL);
+
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
 	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
@@ -62,8 +61,12 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
 	if(SHOW_DEBUG_NUMBERS) {
 		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
+		CSurface::Load((char *)"images/Zero_debug.png", SURFID_ZERO);
+		CSurface::Load((char *)"images/Zero_l_debug.png", SURFID_ZEROL);
 	} else {
 		CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
+		CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
+		CSurface::Load((char *)"images/Zero_l.png", SURFID_ZEROL);
 	}
 	sSurfacePool->CleanUp();
 }

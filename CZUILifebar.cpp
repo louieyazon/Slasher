@@ -22,7 +22,7 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 	positionPortrait.y		= position.y - 55;
 
 	maxwidth				= LIFEBAR_MAXWIDTH;
-	flashing					= false;
+	flashing				= 0;
 
 	//LIFE UPDATE PROBLEM
 	//we may need to pass this constructor a pointer to the hitpoints variable of another object.
@@ -45,9 +45,19 @@ void CZUILifebar::Draw() {
 	sVideo->Draw(SURFID_LIFECONTAINER, positionContainer);									// LIFEBAR HOLDER
 	sVideo->Draw(SURFID_LIFEBARDIFF, position, srcposition_lag, width, height);				// RED LAGGING LIFEBAR
 	sVideo->Draw(SURFID_LIFEBAR, position, srcposition, width, height);						// ACTUAL LIFEBAR
-	if (flashing) {
-		sVideo->Draw(SURFID_LIFEBARWHITE, position, srcposition_lag, width, height);		//LIFEBAR EFFECTS
-		flashing = false;
+	
+	if(flashing == 5) flashing = 0;
+	if(flashing) {
+		if (flashing % 4 < 2) {
+			sVideo->Draw(SURFID_LIFEBARWHITE, position, srcposition_lag, width, height);		//LIFEBAR EFFECTS
+			flashing++;
+		} else if (flashing % 4 > 1) {
+			GD4N::TVector2<int> flashsrcpstn;
+			flashsrcpstn.x = srcposition_lag.x;
+			flashsrcpstn.y = srcposition_lag.y + 500;
+			sVideo->Draw(SURFID_LIFEBARWHITE, position, flashsrcpstn, width, height);		//LIFEBAR EFFECTS
+			flashing++;
+		}
 	}
 
 
@@ -93,5 +103,5 @@ void CZUILifebar::setTargetPercent(float x) {
 
 void CZUILifebar::decreaseTargetPercent(float d) {
 	setTargetPercent(lifeTargetPercent - d);
-	flashing = true;
+	flashing = 1;
 }

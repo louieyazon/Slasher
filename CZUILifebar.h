@@ -15,7 +15,7 @@ protected:
 	float lifeTargetPercent;
 	
 	//effects
-	bool flashing;
+	int flashing;
 	float updateDelay;
 	
 public:
