@@ -5,6 +5,7 @@
 
 #include "CChunk.h"
 #include "CSurface.h"
+#include "CMusic.h"
 
 #include "CBGround.h"
 #include "CZero.h"
@@ -47,11 +48,11 @@ void CSlasherGameManager::LoadResources() {
 	CChunk::Load((char*)"sfx/step2.ogg", SFXID_STEP2);
 	sChunkPool->CleanUp();
 
-	/*
-	CMusic::Load((char*)"music/01-Molly.mp3", MUSICID_01);
-	CMusic::Load((char*)"music/02-Molly.mp3", MUSICID_02);
+	
+	CMusic::Load((char*)"sfx/Megaman X4 Intro Stage.mp3", MUSICID_01);
+	//CMusic::Load((char*)"music/02-Molly.mp3", MUSICID_02);
 	sMusicPool->CleanUp();
-	*/
+	
 
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
 	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);

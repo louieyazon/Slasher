@@ -59,8 +59,7 @@ CZero::CZero() : CGameObject() {
 	zeroTexture->SetCurrentFrame(drawFrame);
 
 	sAudio->PlaySound(SFXID_READY);
-
-
+	sAudio->SetAndPlayMusic(MUSICID_01);
 }
 CZero::~CZero() {
 	delete zeroTexture;
@@ -368,13 +367,13 @@ void CZero::attack() {
 			curFrame = 0;
 			sAudio->PlaySound(SFXID_ZSLASHAIR);
 	}
-	if(animZeroState == AS_SLASH1 && curFrame > 7) {
+	if(animZeroState == AS_SLASH1 && curFrame > 5) {
 		animZeroState = AS_SLASH2;
 		sAudio->PlaySound(SFXID_ZSLASH2);
 		curFrame = 0;
 		spriteTimeLast = sTime->GetTime();
 	}
-	if(animZeroState == AS_SLASH2 && curFrame > 7) {
+	if(animZeroState == AS_SLASH2 && curFrame > 5) {
 		animZeroState = AS_SLASH3;
 		sAudio->PlaySound(SFXID_ZSLASH3);
 		curFrame = 0;

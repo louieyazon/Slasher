@@ -88,6 +88,7 @@ enum SFX_IDS {
 };
 
 enum MUSIC_IDS {
+	MUSICID_01,
 };
 
 enum SURFACE_IDS {
