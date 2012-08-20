@@ -31,18 +31,18 @@ bool CSlasherGameManager::Init() {
 }
 
 void CSlasherGameManager::LoadResources() {
-	CChunk::Load((char*)"sfx/zero-jump_x4.wav", SFXID_ZJUMP);
-	CChunk::Load((char*)"sfx/zero-jump2_x4.wav", SFXID_ZJUMP2);
-	CChunk::Load((char*)"sfx/x-land.wav", SFXID_ZLAND);
-	CChunk::Load((char*)"sfx/zero-slash_x4.wav", SFXID_ZSLASH1);
-	CChunk::Load((char*)"sfx/zero-slash2_x4.wav", SFXID_ZSLASH2);
-	CChunk::Load((char*)"sfx/zero-slash3_x4.wav", SFXID_ZSLASH3);
-	CChunk::Load((char*)"sfx/zero-slash-silent.wav", SFXID_ZSLASHAIR);
-	CChunk::Load((char*)"sfx/zero-dash.wav", SFXID_ZDASH);
-	CChunk::Load((char*)"sfx/x-dashskid.wav", SFXID_ZSKID);
-	CChunk::Load((char*)"sfx/explode_weak.wav", SFXID_ZSLASHHIT);
-	CChunk::Load((char*)"sfx/zero_x4_hurt.wav", SFXID_HURT);
-	CChunk::Load((char*)"sfx/ready.wav", SFXID_READY);
+	CChunk::Load((char*)"sfx/zero-jump_x4.ogg", SFXID_ZJUMP);
+	CChunk::Load((char*)"sfx/zero-jump2_x4.ogg", SFXID_ZJUMP2);
+	CChunk::Load((char*)"sfx/x-land.ogg", SFXID_ZLAND);
+	CChunk::Load((char*)"sfx/zero-slash_x4.ogg", SFXID_ZSLASH1);
+	CChunk::Load((char*)"sfx/zero-slash2_x4.ogg", SFXID_ZSLASH2);
+	CChunk::Load((char*)"sfx/zero-slash3_x4.ogg", SFXID_ZSLASH3);
+	CChunk::Load((char*)"sfx/zero-slash-silent.ogg", SFXID_ZSLASHAIR);
+	CChunk::Load((char*)"sfx/zero-dash.ogg", SFXID_ZDASH);
+	CChunk::Load((char*)"sfx/x-dashskid.ogg", SFXID_ZSKID);
+	CChunk::Load((char*)"sfx/explode_weak.ogg", SFXID_ZSLASHHIT);
+	CChunk::Load((char*)"sfx/zero_x4_hurt.ogg", SFXID_HURT);
+	CChunk::Load((char*)"sfx/ready.ogg", SFXID_READY);
 	sChunkPool->CleanUp();
 
 	/*
