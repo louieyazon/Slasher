@@ -70,13 +70,18 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/explode.png", SURFID_EXPLODE);
 	if(SHOW_DEBUG_NUMBERS) {
 		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
+	} else {
+		CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
+	}
+
+	if(SHOW_SPRITE_NOTES) {
 		CSurface::Load((char *)"images/Zero_debug.png", SURFID_ZERO);
 		CSurface::Load((char *)"images/Zero_l_debug.png", SURFID_ZEROL);
 	} else {
-		CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
 		CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
 		CSurface::Load((char *)"images/Zero_l.png", SURFID_ZEROL);
 	}
+
 	sSurfacePool->CleanUp();
 }
 
@@ -91,6 +96,7 @@ void CSlasherGameManager::Scene00() {
 	CAsteroid* aster = new CAsteroid(0);
 	CAsteroid* aster2 = new CAsteroid(SECOND_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster3 = new CAsteroid(THIRD_ASTEROID_SPAWNDELAY);
+	CAsteroid* aster4 = new CAsteroid(FOURTH_ASTEROID_SPAWNDELAY);
 	CZero* zero = new CZero();
 	CZUILifebar* lifebar = new CZUILifebar();
 
@@ -98,6 +104,7 @@ void CSlasherGameManager::Scene00() {
 	aster->setLifeTarget(&zero->hitpoints);
 	aster2->setLifeTarget(&zero->hitpoints);
 	aster3->setLifeTarget(&zero->hitpoints);
+	aster4->setLifeTarget(&zero->hitpoints);
 	lifebar->setLifeSource(&zero->hitpoints);
 	lifebar->setPointsSource(&zero->points);
 }
