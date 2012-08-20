@@ -12,6 +12,8 @@
 #include <cmath>
 
 CZero::CZero() : CGameObject() {
+	hitpoints		= 100.00;
+
 	//PHYSICS
 	position.x		= STARTING_X;
 	position.y		= STARTING_Y;
@@ -40,10 +42,6 @@ CZero::CZero() : CGameObject() {
 	zeroState		= STATE_STANDING;
 	animZeroState	= AS_STANDING;
 
-	/*logicTimeBetween = 1.0000/50.0000;
-	logicTimeLast = -logicTimeBetween;*/
-
-
 	//animation
 	curFrame		= 0;
 	drawFrame		= 0;
@@ -62,11 +60,12 @@ CZero::CZero() : CGameObject() {
 	zeroTexture->SetCurrentFrame(drawFrame);
 
 	sAudio->PlaySound(SFXID_READY);
-	sAudio->SetAndPlayMusic(MUSICID_01);
+	//sAudio->SetAndPlayMusic(MUSICID_01);
 }
 CZero::~CZero() {
 	delete zeroTexture;
 	delete zeroTextureL;
+	delete UINumbersTexture;
 	zeroTexture = 0;
 	zeroTextureL = 0;
 }
@@ -79,7 +78,6 @@ void CZero::Update() {
 	Physics();
 	readState();
 	Animate();
-	lastZeroState = zeroState;
 }
 void CZero::Draw() {
 	GD4N::TVector2<int> drawPosition;
@@ -148,6 +146,9 @@ void CZero::readState() {
 	if(dashing) {		vx_max = DASH_VX;		}
 	else		{		vx_max = MAX_VX;		}
 
+	lastZeroState = zeroState;
+	// DEBUG DEBUG DEBUG
+	if (hitpoints <= 0) hitpoints = 100.00;
 }
 
 // PHYSICS

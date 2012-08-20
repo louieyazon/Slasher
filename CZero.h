@@ -101,6 +101,8 @@ public:
 	CZero();
 	~CZero();
 	const GD4N::TVector2<int> & GetPosition() { return position; };
+
+	float hitpoints;
 };
 
 enum ZERO_ANIMSTATES {

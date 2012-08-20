@@ -46,6 +46,8 @@ void CSlasherGameManager::LoadResources() {
 	CChunk::Load((char*)"sfx/ready.ogg", SFXID_READY);
 	CChunk::Load((char*)"sfx/step1.ogg", SFXID_STEP1);
 	CChunk::Load((char*)"sfx/step2.ogg", SFXID_STEP2);
+	CChunk::Load((char*)"sfx/explode_weak.ogg", SFXID_EXPLODE);
+
 	sChunkPool->CleanUp();
 
 	
@@ -62,6 +64,7 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/zeroportraitbar.png", SURFID_ZEROPORTRAIT);
 	CSurface::Load((char *)"images/lifebar_holder.png", SURFID_LIFECONTAINER);
 	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
+	CSurface::Load((char *)"images/explode.png", SURFID_EXPLODE);
 	if(SHOW_DEBUG_NUMBERS) {
 		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
 		CSurface::Load((char *)"images/Zero_debug.png", SURFID_ZERO);
@@ -81,7 +84,11 @@ void CSlasherGameManager::Scene00() {
 	new CPlatform(PLATFORM_2X, PLATFORM_2Y);
 	new CPlatform(PLATFORM_3X, PLATFORM_3Y);
 	new CPlatform(PLATFORM_4X, PLATFORM_4Y);
-	new CAsteroid();
-	new CZero();
-	new CZUILifebar();
+
+	CAsteroid* aster = new CAsteroid();
+	CZero* zero = new CZero();
+	CZUILifebar* lifebar = new CZUILifebar();
+
+	aster->setLifeTarget(&zero->hitpoints);
+	lifebar->setLifeSource(&zero->hitpoints);
 }

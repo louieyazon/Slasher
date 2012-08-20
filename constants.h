@@ -50,10 +50,11 @@ const float STARTING_X		=	150;
 const float STARTING_Y		=	-300;
 
 //asteroid constants
-const float MAX_AVX = 60.0f;
+const float MAX_AVX = 50.0f;
 const float MIN_AVX = 30.0f;
 const float ASPAWN_X = 800;
 const float HITPOS_X = -110;
+const float ASTEROID_RADIUS = 60.0;
 
 //PLATFORMS
 const int PLATFORM_WIDTH	=	110;		const int PLATFORM_HEIGHT	=	35;
@@ -94,6 +95,7 @@ enum SFX_IDS {
 	SFXID_READY,
 	SFXID_STEP1,
 	SFXID_STEP2,
+	SFXID_EXPLODE,
 };
 
 enum MUSIC_IDS {
@@ -106,6 +108,7 @@ enum SURFACE_IDS {
 	SURFID_BKGD,
 	SURFID_PLATFORM,
 	SURFID_ASTEROID,
+	SURFID_EXPLODE,
 	
 	//UI STUFF
 	SURFID_LIFEBAR,
@@ -113,7 +116,7 @@ enum SURFACE_IDS {
 	SURFID_LIFEBARWHITE,
 	SURFID_LIFECONTAINER,
 	SURFID_ZEROPORTRAIT,
-	SURFID_UINUMBERS
+	SURFID_UINUMBERS	
 };
 
 enum direction_t {

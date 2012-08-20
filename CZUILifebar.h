@@ -17,6 +17,7 @@ protected:
 	//effects
 	int flashing;
 	float updateDelay;
+	float* UIlifesource;
 	
 public:
 	CZUILifebar();
@@ -26,6 +27,7 @@ public:
 
 	void setTargetPercent(float x);
 	void decreaseTargetPercent(float x);
+	void setLifeSource(float* lifesource);
 
 	GD4N::TVector2<int> position;
 	GD4N::TVector2<int> positionContainer;

@@ -24,10 +24,6 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 	maxwidth				= LIFEBAR_MAXWIDTH;
 	flashing				= 0;
 
-	//LIFE UPDATE PROBLEM
-	//we may need to pass this constructor a pointer to the hitpoints variable of another object.
-	//it seems like the only other way for objects to communicate is through the collision engine. (which is kinda weird)
-	//the objects in the scene are anonymous, and i'm not sure how to access them if we gave them variable names.
 	lifeTargetPercent		= 100.0;
 
 	
@@ -60,16 +56,16 @@ void CZUILifebar::Draw() {
 		}
 	}
 
-
 	sVideo->Draw(SURFID_ZEROPORTRAIT, positionPortrait);									// ZERO PORTRAIT
-
 }
 
 void CZUILifebar::Update() {
-	if(	(rand() % 200)	==	1) {		//take random damage at random intervals for testing
+	/*if(	(rand() % 200)	==	1) {		//take random damage at random intervals for testing
 		int dmg = (rand() % 20) + 10;
 		decreaseTargetPercent(dmg);	
-	}	
+	}*/	
+
+	setTargetPercent(*UIlifesource);
 	equalize();
 	targetsrcposition.y = 0 + (int)((100 - lifeTargetPercent) / 100 * LIFEBAR_MAXSPRITEY);
 }
@@ -95,10 +91,13 @@ void CZUILifebar::equalize() {
 }
 
 
+void CZUILifebar::setLifeSource(float* lifesource){
+	UIlifesource = lifesource;
+}
+
 void CZUILifebar::setTargetPercent(float x) {
 	lifeTargetPercent = x;
-	//if (lifeTargetPercent <= 0) lifeTargetPercent = 0;		real code
-	if (lifeTargetPercent <= 0) {	lifeTargetPercent = 100;	targetsrcposition.y = 0;	}			//DEBUG CODE
+	if (lifeTargetPercent <= 0) lifeTargetPercent = 0;
 }
 
 void CZUILifebar::decreaseTargetPercent(float d) {
