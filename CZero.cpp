@@ -85,7 +85,7 @@ void CZero::Draw() {
 	if(facingRight)	sVideo->Draw(zeroTexture, drawPosition);
 	else sVideo->Draw(zeroTextureL, drawPosition);
 
-	if(SHOW_DEBUG_NUMBERS) DrawDebug();											//draw debug numbers;
+	if(SHOW_DEBUG_NUMBERS) DrawDebug();						//draw debug numbers;
 }
 
 void CZero::ReactToInput(){	
@@ -127,7 +127,6 @@ void CZero::reenableDash() {
 	dashfuel = dashmax;
 	dashing = false;
 }
-
 
 void CZero::readState() {
 	if(!falling){	//on the ground
@@ -211,9 +210,6 @@ void CZero::Animate() {
 	decideFrame();
 }
 void CZero::setAnimationState() {
-
-
-
 	if(!falling){		//ground animations
 		if(zeroState == STATE_STANDING) {	// vx = 0
 			if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
@@ -259,7 +255,9 @@ void CZero::forwardFrame() {
 }
 void CZero::decideFrame() {
 	if(zeroState != lastZeroState) { curFrame = 0; }			// reset curFrame to show first frame if animation state changed
+
 	int nMaxFrame = aCycle[animZeroState].numberOfFrames;		// 
+
 	if(curFrame >= nMaxFrame) nextAnimState();					// when the last frame is reached, play the next animation
 	drawFrame = aCycle[animZeroState].spriteFrame[curFrame];
 
@@ -269,16 +267,15 @@ void CZero::decideFrame() {
 void CZero::nextAnimState() {
 	curFrame = 0;
 	animZeroState = aCycle[animZeroState].nextAnimState;
-	
 }
 
 // MOVES
-void CZero::accelerate_up()    {	
+void CZero::accelerate_up()    {	// jump
 									vy = -ZJUMPY * dt;
 									//vy -= ay * dt;
 									minmaxf(&vy, -vy_max, vy_max);
 }
-void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);		}
+void CZero::accelerate_down()	{	vy += ay * dt; minmaxf(&vy, -vy_max, vy_max);		}	//unused
 void CZero::accelerate_left()	{	vx -= ax * dt; facingRight = false;					}
 void CZero::accelerate_right()	{	vx += ax * dt; facingRight = true;					}
 void CZero::dashccelerate()		{	vx += ZDASH * dt * ((facingRight? 1 : -1));			}
@@ -320,7 +317,6 @@ void CZero::dash() {
 void CZero::undash() {
 	disableDash();
 }
-
 void CZero::attack() {
 	// TODO
 	// set state to attacking/slashing
@@ -438,7 +434,6 @@ void CZero::DrawDebug(){
 
 
 }
-
 void CZero::debugNumber(const int x, const int y, const int digits, const int* number){
 	GD4N::TVector2<int> digitpos;
 	digitpos.x = x;
@@ -456,7 +451,6 @@ void CZero::debugNumber(const int x, const int y, const int digits, const int* n
 		powdigit *= 10;
 	}
 }
-
 void CZero::drawSlashAfter(const int x, const int y) {
 	GD4N::TVector2<int> digitpos;
 	digitpos.x = x + 6;
@@ -464,7 +458,6 @@ void CZero::drawSlashAfter(const int x, const int y) {
 	UINumbersTexture->SetCurrentFrame(10);
 	sVideo->Draw(UINumbersTexture, digitpos);
 }
-
 void CZero::debugNumber(const int x, const int y, const int digits, const float* number){
 	int debugfloat = *number;
 	debugNumber(x, y, digits, &debugfloat);
