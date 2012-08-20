@@ -31,9 +31,14 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 
 	height					= LIFEBAR_SPRITEHEIGHT;
 	width					= LIFEBAR_MAXWIDTH;
+
+
+	UINumbersTexture = new GD4N::CSurfaceSheet(SURFID_UILARGENUMBERS);
+	UINumbersTexture->SetSpriteDimensions(1,10);
 }
 
 CZUILifebar::~CZUILifebar() {
+	delete UINumbersTexture;
 }
 
 //sVideo->Draw(SURFID_LIFEBAR, position); base statement
@@ -57,6 +62,7 @@ void CZUILifebar::Draw() {
 	}
 
 	sVideo->Draw(SURFID_ZEROPORTRAIT, positionPortrait);									// ZERO PORTRAIT
+	showPointsNumber(320, 10, 8, *UIpointsource);
 }
 
 void CZUILifebar::Update() {
@@ -95,6 +101,10 @@ void CZUILifebar::setLifeSource(float* lifesource){
 	UIlifesource = lifesource;
 }
 
+void CZUILifebar::setPointsSource(int* pointsource){
+	UIpointsource = pointsource;
+}
+
 void CZUILifebar::setTargetPercent(float x) {
 	lifeTargetPercent = x;
 	if (lifeTargetPercent <= 0) lifeTargetPercent = 0;
@@ -103,4 +113,21 @@ void CZUILifebar::setTargetPercent(float x) {
 void CZUILifebar::decreaseTargetPercent(float d) {
 	setTargetPercent(lifeTargetPercent - d);
 	flashing = 1;
+}
+
+void CZUILifebar::showPointsNumber(const int x, const int y, const int digits, const int outpoints) {
+	GD4N::TVector2<int> digitpos;
+	digitpos.x = x;
+	digitpos.y = y;
+	int digitVal = 1;
+	int powdigit = 1;
+
+	for(int dig = 0; dig < digits; dig++) {
+		digitVal = (int)(outpoints / powdigit) % 10;
+		digitpos.x = x - (dig * 21);
+		UINumbersTexture->SetCurrentFrame(digitVal);
+		sVideo->Draw(UINumbersTexture, digitpos);
+		powdigit *= 10;
+	}
+
 }

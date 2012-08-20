@@ -13,7 +13,7 @@
 
 CZero::CZero() : CGameObject() {
 	hitpoints		= 100.00;
-
+	points			= 0;
 	//PHYSICS
 	position.x		= STARTING_X;
 	position.y		= STARTING_Y;
@@ -48,6 +48,12 @@ CZero::CZero() : CGameObject() {
 	spriteTimeBetween = 1.0000/60.0000;
 	spriteTimeLast = sTime->GetTime();
 
+
+	timeSinceLastPoint = sTime->GetTime();
+
+
+
+
 	UINumbersTexture = new GD4N::CSurfaceSheet(SURFID_UINUMBERS);
 	UINumbersTexture->SetSpriteDimensions(1,12);
 
@@ -60,7 +66,7 @@ CZero::CZero() : CGameObject() {
 	zeroTexture->SetCurrentFrame(drawFrame);
 
 	sAudio->PlaySound(SFXID_READY);
-	//sAudio->SetAndPlayMusic(MUSICID_01);
+	sAudio->SetAndPlayMusic(MUSICID_01);
 }
 CZero::~CZero() {
 	delete zeroTexture;
@@ -74,6 +80,7 @@ void CZero::Update() {
 	/*if(logicTimeLast + logicTimeBetween < sTime->GetTime()) {
 		logicTimeLast = sTime->GetTime();
 	}*/
+	earnTimePoints();
 	ReactToInput();
 	Physics();
 	readState();
@@ -149,6 +156,14 @@ void CZero::readState() {
 	lastZeroState = zeroState;
 	// DEBUG DEBUG DEBUG
 	if (hitpoints <= 0) hitpoints = 100.00;
+}
+
+// POINTS
+void CZero::earnTimePoints() {
+	if(sTime->GetTime() - timeSinceLastPoint >= TIME_POINT_RATE) {
+		timeSinceLastPoint = sTime->GetTime();
+		points++;
+	}
 }
 
 // PHYSICS

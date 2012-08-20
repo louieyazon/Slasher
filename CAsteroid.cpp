@@ -30,7 +30,9 @@ CAsteroid::CAsteroid() : CGameObject() {
 }
 
 CAsteroid::~CAsteroid() {
-
+	delete explodesheet;
+	delete explodesheet2;
+	delete explodesheet3;
 }
 
 void CAsteroid::explode() {

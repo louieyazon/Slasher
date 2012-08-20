@@ -3,6 +3,7 @@
 
 #include "TVector2.h"
 #include "CGameObject.h"
+#include "CSurfaceSheet.h"
 
 class CZUILifebar: public GD4N::CGameObject {
 protected:
@@ -12,12 +13,20 @@ protected:
 	void equalize();
 
 	int maxwidth;
+	int points;
 	float lifeTargetPercent;
 	
 	//effects
 	int flashing;
 	float updateDelay;
 	float* UIlifesource;
+	int* UIpointsource;
+
+	//score
+	GD4N::CSurfaceSheet *UINumbersTexture;
+
+	//points
+	void showPointsNumber(const int x, const int y, const int digits, const int outpoints);
 	
 public:
 	CZUILifebar();
@@ -28,6 +37,7 @@ public:
 	void setTargetPercent(float x);
 	void decreaseTargetPercent(float x);
 	void setLifeSource(float* lifesource);
+	void setPointsSource(int* pointsource);
 
 	GD4N::TVector2<int> position;
 	GD4N::TVector2<int> positionContainer;

@@ -95,6 +95,9 @@ protected:
 	void disableDash();
 	void reenableDash();
 
+	//points system
+	float timeSinceLastPoint;
+	void earnTimePoints();
 
 
 public:
@@ -103,6 +106,7 @@ public:
 	const GD4N::TVector2<int> & GetPosition() { return position; };
 
 	float hitpoints;
+	int points;
 };
 
 enum ZERO_ANIMSTATES {
