@@ -32,6 +32,9 @@ CZero::CZero() : CGameObject() {
 
 	falling			= true;
 	dashing			= false;
+	
+	dashslashing	= false;
+	attacknum		= 0;
 	previousTime	= SDL_GetTicks() * 0.01f;
 
 	zeroState		= STATE_STANDING;
@@ -91,29 +94,25 @@ void CZero::Draw() {
 
 void CZero::ReactToInput(){	
 
-	if(!dashing || (falling && dashing)) {
-		if(animZeroState != AS_SLASH1 && animZeroState != AS_SLASH2 && animZeroState != AS_SLASH3) {		//DUMMY CODE: remove this after animation-centric code is removed
-			if(sInput->GetKey(KEYBIND_RIGHT))			{		accelerate_right();		}
-			if(sInput->GetKey(KEYBIND_LEFT))			{		accelerate_left();		}
+	if((!dashing && !dashslashing) || (falling && dashing)) {
+		if(attacknum == 0 || falling) {
+			if(sInput->GetKey(KEYBIND_RIGHT) || sInput->GetKey(KEYBIND_RIGHT2))			{		accelerate_right();		}
+			if(sInput->GetKey(KEYBIND_LEFT) || sInput->GetKey(KEYBIND_LEFT2))			{		accelerate_left();		}
 		}
-
 	}
 
-	if(sInput->GetKey(KEYBIND_JUMP))				{		jump();					}
-	else if(sInput->GetKeyUp(KEYBIND_JUMP))			{		breakjump();			}
+	if(sInput->GetKey(KEYBIND_JUMP) || sInput->GetKey(KEYBIND_JUMP2))					{		jump();					}
+	else if(sInput->GetKeyUp(KEYBIND_JUMP) || sInput->GetKeyUp(KEYBIND_JUMP2))			{		breakjump();			}
 	
-	if(!falling) {																		//ground-only controls
-		if(sInput->GetKey(KEYBIND_DASH))			{		dash();					}
+	if(!falling && !dashslashing) {																		//ground-only controls
+		if(sInput->GetKey(KEYBIND_DASH) || sInput->GetKey(KEYBIND_DASH2))				{		dash();					}
 	}
-	if(sInput->GetKeyUp(KEYBIND_DASH))				{		undash();				}
-
-	
-
-	if(sInput->GetKey(KEYBIND_ATTACK))				{		attack();				}
+	if(sInput->GetKeyUp(KEYBIND_DASH) || sInput->GetKeyUp(KEYBIND_DASH2))				{		undash();				}
+	if(sInput->GetKey(KEYBIND_ATTACK) || sInput->GetKey(KEYBIND_ATTACK2))				{		attack();				}
 	
 	//prevent hopping (by holding jump key)
-	if(!sInput->GetKey(KEYBIND_JUMP) && !falling)	{		reenableJump();			}	//re-enable jumping only when jump key is released and player has landed on the ground
-	if(!sInput->GetKey(KEYBIND_DASH) && !dashing)	{		reenableDash();			}	//re-enable jumping only when jump key is released and player has landed on the ground
+	if(!sInput->GetKey(KEYBIND_JUMP) && !sInput->GetKey(KEYBIND_JUMP2) && !falling)	{		reenableJump();			}	//re-enable jumping only when jump key is released and player has landed on the ground
+	if(!sInput->GetKey(KEYBIND_DASH) && !sInput->GetKey(KEYBIND_DASH2) && !dashing)	{		reenableDash();			}	//re-enable jumping only when jump key is released and player has landed on the ground
 }
 void CZero::disableJump() {
 	jumpfuel = 0;
@@ -132,9 +131,10 @@ void CZero::reenableDash() {
 void CZero::readState() {
 	if(!falling){	//on the ground
 		int nvx = (vx * dt);
-		if(nvx == 0)			{	zeroState = STATE_STANDING;	}		// not moving
+		if(nvx == 0)			{	zeroState = STATE_STANDING; dashslashing = false;}		// not moving
 		else if(!dashing)		{	zeroState = STATE_RUNNING;	}		// moving		
 		else					{	zeroState = STATE_DASHING;	}
+		
 
 		if(dashfuel <= 0)		{	dashing = false;			}
 	}
@@ -199,8 +199,10 @@ void CZero::boundme (int* val, int min, int max) {
 void CZero::land() {
 	vy = 0;
 	zeroState = STATE_STANDING;
-	animZeroState = AS_LANDING;	
+	animZeroState = AS_LANDING;
+	attacknum = 0;
 	falling = false;
+	dashing = false;
 	sAudio->PlaySound(SFXID_ZLAND);
 }
 
@@ -222,12 +224,12 @@ void CZero::frameSound() {
 	}
 }
 void CZero::setAnimationState() {
-	if(!falling){		//ground animations
+	if(!falling && attacknum == 0){		//ground animations
 		if(zeroState == STATE_STANDING) {	// vx = 0
 			if(animZeroState == AS_RUNNING) animZeroState = AS_STOPRUN;
 		}
 
-		if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING && !dashing) {	// vx != 0
+		if(zeroState == STATE_RUNNING && animZeroState != AS_BREAKING && animZeroState != AS_DSLASHING && !dashing) {	// vx != 0
 			if(animZeroState == AS_STANDING) animZeroState = AS_STARTRUN;
 			if(animZeroState != AS_STARTRUN) animZeroState = AS_RUNNING;
 		}
@@ -279,7 +281,9 @@ void CZero::decideFrame() {
 }
 void CZero::nextAnimState() {
 	curFrame = 0;
+	
 	animZeroState = aCycle[animZeroState].nextAnimState;
+	if(animZeroState != AS_RUNNING) attacknum = 0;
 }
 
 // MOVES
@@ -317,7 +321,7 @@ void CZero::dash() {
 	// the Physics > friction > grind function should probably take care of braking.
 
 	if(dashfuel > 0) {
-		if(!dashing) {						//jump from ground
+		if(!dashing && !dashslashing) {						//jump from ground
 			zeroState = STATE_DASHING;
 			dashing = true;
 			sAudio->PlaySound(SFXID_ZDASH);
@@ -348,39 +352,44 @@ void CZero::attack() {
 	
 	// 
 	// ANIMATION-CENTRIC DUMMY ATTACK CONTROL LOGIC CODE. DO NOT USE AS IS BECAUSE THIS IS REALLY BUGGY.
-	if(!falling &&
-		(animZeroState == AS_STANDING ||		//these are the conditions when zero should be allowed to do a primary slash
-		animZeroState == AS_KEEPSABER ||
-		animZeroState == AS_LANDING ||
-		animZeroState == AS_RUNNING ||
-		animZeroState == AS_STARTRUN ||
-		animZeroState == AS_STOPRUN
-		)
-		) {
-			animZeroState = AS_SLASH1;
-			sAudio->PlaySound(SFXID_ZSLASH1);
-			spriteTimeLast = sTime->GetTime();
+	if(!falling) {
+		if(	attacknum == 0 &&
+			(animZeroState == AS_STANDING ||		//these are the conditions when zero should be allowed to do a primary slash
+			animZeroState == AS_KEEPSABER ||
+			animZeroState == AS_LANDING ||
+			animZeroState == AS_RUNNING ||
+			animZeroState == AS_STARTRUN ||
+			animZeroState == AS_STOPRUN)
+		)									{	slash(1);	}	//slash 1
+		if (attacknum == 1 && curFrame > 5)	{	slash(2);	}	//slash 2
+		if (attacknum == 2 && curFrame > 5)	{	slash(3);	}	//slash 3
+
+		if(dashing && !dashslashing)		{	slash(17);	}	//dashing slash (code 17)
 	}
-	if (falling &&
-		animZeroState != AS_AIRSLASH) {
-			animZeroState = AS_AIRSLASH;
-			curFrame = 0;
-			sAudio->PlaySound(SFXID_ZSLASHAIR);
-	}
-	if(animZeroState == AS_SLASH1 && curFrame > 5) {
-		animZeroState = AS_SLASH2;
-		sAudio->PlaySound(SFXID_ZSLASH2);
-		curFrame = 0;
-		spriteTimeLast = sTime->GetTime();
-	}
-	if(animZeroState == AS_SLASH2 && curFrame > 5) {
-		animZeroState = AS_SLASH3;
-		sAudio->PlaySound(SFXID_ZSLASH3);
-		curFrame = 0;
-		spriteTimeLast = sTime->GetTime();
+
+	if (falling && attacknum == 0)			{	slash(13);	}		// air slash (code 13)
+	
+}
+
+void CZero::slash(int slashnum){
+	switch(slashnum) {
+		case 0: break;
+		case 1: animZeroState = AS_SLASH1; sAudio->PlaySound(SFXID_ZSLASH1); break;
+		case 2: animZeroState = AS_SLASH2; sAudio->PlaySound(SFXID_ZSLASH2); break;
+		case 3: animZeroState = AS_SLASH3; sAudio->PlaySound(SFXID_ZSLASH3); break;
+		case 13: animZeroState = AS_AIRSLASH; sAudio->PlaySound(SFXID_ZSLASHAIR); break;
+		case 17:	animZeroState = AS_DSLASHING;
+					sAudio->PlaySound(SFXID_ZSLASHAIR);
+					dashing = false;
+					dashslashing = true;
+					undash();
+					dashccelerate();
+					break;
 	}
 	
-
+	attacknum = slashnum;
+	curFrame = 0;
+	spriteTimeLast = sTime->GetTime();
 }
 
 //COLLISIONS
@@ -407,7 +416,6 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 	}
 	return false;
 }
-
 void CZero::CollidesWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
 		case TYPE_PLATFORM:
@@ -436,6 +444,9 @@ void CZero::DrawDebug(){
 	debugNumber(250, 570, 2, &curFrame);
 	int checkspritetime = spriteTimeBetween * 1000;
 	debugNumber(290, 570, 3, &checkspritetime);
+	
+	debugNumber(200, 570, 2, &attacknum);
+
 
 	
 

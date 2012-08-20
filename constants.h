@@ -16,6 +16,15 @@ const SDLKey KEYBIND_JUMP	=	SDLK_SPACE;
 const SDLKey KEYBIND_DASH	=	SDLK_c;
 const SDLKey KEYBIND_ATTACK	=	SDLK_z;
 
+const SDLKey KEYBIND_LEFT2		=	SDLK_KP4;
+const SDLKey KEYBIND_RIGHT2		=	SDLK_KP6;
+const SDLKey KEYBIND_UP2		=	SDLK_KP8;
+const SDLKey KEYBIND_DOWN2		=	SDLK_KP5;
+const SDLKey KEYBIND_JUMP2		=	SDLK_END;
+const SDLKey KEYBIND_DASH2		=	SDLK_HOME;
+const SDLKey KEYBIND_ATTACK2	=	SDLK_DELETE;
+
+
 //PHYSICS CONSTANTS
 
 //horizontal movement
@@ -25,7 +34,7 @@ const float ZAX				=	40.0f;		//acceleration
 
 //vertical movement
 const float GRAVITY_ACC		=	20.0f;		
-const float MAX_VY			=	600.0f;		//max speed
+const float MAX_VY			=	60.0f;		//max speed
 const float ZAY				=	40.0f;		//acceleration
 
 const float ZJUMPY			=	1200.0f;	//this seems to be too big on slow computers, i wonder how to fix it.

@@ -83,11 +83,14 @@ protected:
 	void jump();
 	void breakjump();
 	void attack();
+	void slash(int slashnum);
 
 	//control logic
 	void disableJump();
 	void reenableJump();
 	void land();
+	int attacknum;
+	bool dashslashing;
 
 	void disableDash();
 	void reenableDash();
@@ -117,7 +120,8 @@ enum ZERO_ANIMSTATES {
 	AS_AIRSLASH		= 13,
 	AS_INTODASH		= 14,
 	AS_DASHING		= 15,
-	AS_BREAKING		= 16
+	AS_BREAKING		= 16,
+	AS_DSLASHING	= 17
 };
 
 const int sfZeroStand[]		 =	{	20,20,20,21,22,22,22,21						};
@@ -130,19 +134,20 @@ const int sfZeroSlash2[] =		{	43,44,45,46,47,48,49,50,51,52,53			};
 const int sfZeroSlash3[] =		{	54,55,56,57,58,59,60,61,62,63,64,65,66,67	};
 const int sfZeroKS[] =			{	25,26,27,28									};
 
+const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94,81				};
+const int sfZeroDSlash[] =		{	111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121};
+
 const int sfZeroJump[] =		{	70,71										};
 const int sfZeroRise[] =		{	72,73										};
 const int sfZeroJT[] =			{	74,75,76,77,78							 	};
 const int sfZeroFall[] =		{	79,80,81									};
 const int sfZeroLand[] =		{	82,83,84,85									};
-const int sfZeroJSlash[] =		{	86,87,88,89,90,91,92,93,94,81				};
-
 
 const int sfZeroIntoDash[] =	{	100, 101, 102, 103							};
 const int sfZeroDashing[] =		{	104, 105, 106								};
 const int sfZeroBreak[]	=		{	107, 108, 109, 110, 110, 110, 110	};
 
-const int sfZeroDSlash[] =		{	111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121};
+
 
 
 
@@ -173,7 +178,7 @@ const animPart aCycle[] = {
 		{ sizeof(sfZeroIntoDash)/sizeof(int),	0.033f,		false	,	(int*)&sfZeroIntoDash	, AS_DASHING	}, //zero into dash
 		{ sizeof(sfZeroDashing)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDashing	, AS_DASHING	}, //zero dashing
 		{ sizeof(sfZeroBreak)/sizeof(int)	,	0.035f,		false	,	(int*)&sfZeroBreak		, AS_STANDING	}, //zero breaking
-		{ sizeof(sfZeroDSlash)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroDSlash		, AS_STANDING	} //zero dashing slash
+		{ sizeof(sfZeroDSlash)/sizeof(int)	,	0.025f,		false	,	(int*)&sfZeroDSlash		, AS_STANDING	} //zero dashing slash
 };
 
 #endif
