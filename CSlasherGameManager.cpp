@@ -17,6 +17,7 @@
 #include "constants.h"
 
 using namespace GD4N;
+bool gameOn = false;
 
 CSlasherGameManager::CSlasherGameManager() {
 	windowTitle = (char *)"Zero Slasher";
@@ -55,8 +56,9 @@ void CSlasherGameManager::LoadResources() {
 	//CMusic::Load((char*)"music/02-Molly.mp3", MUSICID_02);
 	sMusicPool->CleanUp();
 	
-
+	CSurface::Load((char *)"images/zeroslasherlogo.png", SURFID_SLASHERLOGO);
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
+	CSurface::Load((char *)"images/arrow.png", SURFID_ARROW);
 	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
 	CSurface::Load((char *)"images/lifebar_diff.png", SURFID_LIFEBARDIFF);
@@ -86,11 +88,16 @@ void CSlasherGameManager::Scene00() {
 	new CPlatform(PLATFORM_3X, PLATFORM_3Y);
 	new CPlatform(PLATFORM_4X, PLATFORM_4Y);
 
-	CAsteroid* aster = new CAsteroid();
+	CAsteroid* aster = new CAsteroid(0);
+	CAsteroid* aster2 = new CAsteroid(SECOND_ASTEROID_SPAWNDELAY);
+	CAsteroid* aster3 = new CAsteroid(THIRD_ASTEROID_SPAWNDELAY);
 	CZero* zero = new CZero();
 	CZUILifebar* lifebar = new CZUILifebar();
 
+	//object communication
 	aster->setLifeTarget(&zero->hitpoints);
+	aster2->setLifeTarget(&zero->hitpoints);
+	aster3->setLifeTarget(&zero->hitpoints);
 	lifebar->setLifeSource(&zero->hitpoints);
 	lifebar->setPointsSource(&zero->points);
 }

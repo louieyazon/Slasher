@@ -15,7 +15,8 @@ protected:
 	int maxwidth;
 	int points;
 	float lifeTargetPercent;
-	
+	bool logo;
+
 	//effects
 	int flashing;
 	float updateDelay;
@@ -39,6 +40,7 @@ public:
 	void setLifeSource(float* lifesource);
 	void setPointsSource(int* pointsource);
 
+	GD4N::TVector2<int> logoposition;
 	GD4N::TVector2<int> position;
 	GD4N::TVector2<int> positionContainer;
 	GD4N::TVector2<int> positionPortrait;

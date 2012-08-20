@@ -1,10 +1,12 @@
 #include "CZUILifebar.h"
+#include "STimeManager.h"
 #include "SVideoManager.h"
 #include "constants.h"
 
 CZUILifebar::CZUILifebar() : CGameObject() {
 	position.x				= LIFEBAR_X;
 	position.y				= LIFEBAR_Y;
+	logo					= true;
 
 	srcposition.x			= 0;
 	srcposition.y			= 0;			//max is LIFEBAR_MAXSPRITEY
@@ -14,6 +16,9 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 
 	targetsrcposition.x		= 0;
 	targetsrcposition.y		= 0;
+
+	logoposition.x			= LOGOPOS_X;
+	logoposition.y			= LOGOPOS_Y;
 
 	positionContainer.x		= position.x - 5;
 	positionContainer.y		= position.y - 4;
@@ -63,6 +68,14 @@ void CZUILifebar::Draw() {
 
 	sVideo->Draw(SURFID_ZEROPORTRAIT, positionPortrait);									// ZERO PORTRAIT
 	showPointsNumber(320, 10, 8, *UIpointsource);
+
+	if(!gameOn) {
+		if(logo) sVideo->Draw(SURFID_SLASHERLOGO, logoposition);
+
+		if(sTime->GetTime() > LOGO_DURATION)	 { logo = false; }
+		if(sTime->GetTime() > LOGO_DURATION + 1) { gameOn = true; }
+	}
+	
 }
 
 void CZUILifebar::Update() {

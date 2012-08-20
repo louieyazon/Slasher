@@ -6,13 +6,19 @@
 #include "SlasherUtil.h"
 #include "SAudioManager.h"
 
-CAsteroid::CAsteroid() : CGameObject() {
+CAsteroid::CAsteroid(float spawndelay) : CGameObject() {
+	asteroidspawndelay = spawndelay;
+	asteroidOn = false;
 	radius = ASTEROID_RADIUS;
 	spriteTimeBetween = 0.02;
 	spriteTimeLast = sTime->GetTime();
-	
+
+
+
+	generateNextY();
 	Respawn();
-	
+	arrow_y = next_y;
+
 	explodesheet =  new GD4N::CSurfaceSheet(SURFID_EXPLODE);
 	explodesheet->SetSpriteDimensions(2,9);
 	explodesheet->SetCurrentFrame(explodeframe);
@@ -52,6 +58,16 @@ void CAsteroid::Draw() {
 		drawposition.y = position.y - 40;
 		sVideo->Draw(SURFID_ASTEROID, drawposition);
 	}
+
+	
+	if(exploded || position.x < 300) {
+		GD4N::TVector2<int> arrowposition;
+		if(arrow_y != next_y) arrow_y += (next_y - arrow_y) / 20;
+
+		arrowposition.x = 750;
+		arrowposition.y = arrow_y - 10;
+		sVideo->Draw(SURFID_ARROW, arrowposition);
+	}
 }
 
 
@@ -74,9 +90,14 @@ void CAsteroid::drawExplode(){
 }
 
 void CAsteroid::Update() {
-	if (exploded && explodeframe3 > 17) Respawn();
-	if (!exploded) position.x -= dt * vx;
-	bound();
+	if(!asteroidOn) {
+		if(sTime->GetTime() > asteroidspawndelay) asteroidOn = true;
+	}
+
+	if(gameOn && asteroidOn){
+		if (!exploded) position.x -= dt * vx;
+		bound();
+	}
 }
 
 void CAsteroid::Animate() {
@@ -100,22 +121,26 @@ void CAsteroid::Animate() {
 }
 
 void CAsteroid::bound() {
-	if(position.x < 50 && !exploded) {
+	if (exploded && explodeframe3 > 17) Respawn();
+
+	if(position.x < CUTEFACTORY_X && !exploded) {
 		explode();
-		*zlifetarget -= 10;
+		*zlifetarget -= ASTEROID_DAMAGE;
 	}
-	
-	/*if (position.x < HITPOS_X) {
-		Respawn();
-	}*/
+
 }
 
 void CAsteroid::Respawn() {
 	exploded		= false;
 	explodeframe	= -1;
 	position.x		= ASPAWN_X;
-	position.y		= randoValue(0, (int)FLOORLEVEL);
-	vx				= randoValue(MIN_AVX, MAX_AVX); 
+	position.y		= next_y;
+	vx				= randoValue(MIN_AVX, MAX_AVX);
+	generateNextY();
+}
+
+void CAsteroid::generateNextY() {
+	next_y = randoValue(0, (int)FLOORLEVEL);
 }
 
 void CAsteroid::setLifeTarget(float* lifetarget) {

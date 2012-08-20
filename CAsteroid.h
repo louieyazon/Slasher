@@ -16,7 +16,11 @@ protected:
 	void drawExplode();
 	//physics
 	float vy;	float vx;	float vx_max;	float vy_max;
-	
+	int next_y;
+	int arrow_y;
+	bool asteroidOn;
+	float asteroidspawndelay;
+
 	//animation
 	GD4N::CSurfaceSheet *explodesheet;
 	GD4N::CSurfaceSheet *explodesheet2;
@@ -28,9 +32,10 @@ protected:
 	float spriteTimeBetween;
 
 	float* zlifetarget;
+	void generateNextY();
 	
 public:
-	CAsteroid();
+	CAsteroid(float spawndelay);
 	~CAsteroid();
 
 	void explode();

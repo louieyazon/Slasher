@@ -7,7 +7,12 @@
 
 const bool SHOW_DEBUG_NUMBERS = true;
 
+//POINTS SYSTEM
 const float TIME_POINT_RATE	= 0.350f;
+const float ASTEROID_DAMAGE = 5.0f;
+const float SECOND_ASTEROID_SPAWNDELAY = 20.0f;
+const float THIRD_ASTEROID_SPAWNDELAY = 30.0f;
+
 
 //CONTROLS
 const SDLKey KEYBIND_LEFT	=	SDLK_LEFT;
@@ -26,9 +31,14 @@ const SDLKey KEYBIND_JUMP2		=	SDLK_END;
 const SDLKey KEYBIND_DASH2		=	SDLK_HOME;
 const SDLKey KEYBIND_ATTACK2	=	SDLK_DELETE;
 
+//SPLASH LOGO
+const float LOGO_DURATION	= 4.00f;
+const int LOGOPOS_X			= 100;
+const int LOGOPOS_Y			= 80;
+
+
 
 //PHYSICS CONSTANTS
-
 //horizontal movement
 const float FRIC_X			=	17.0f;		
 const float MAX_VX			=	28.0f;		//max speed
@@ -49,13 +59,13 @@ const float DASH_FUEL_MAX	=	260;
 const float DASHCONSUMPTION	=	60;
 
 const float STARTING_X		=	150;
-const float STARTING_Y		=	-300;
+const float STARTING_Y		=	-100;
 
 //asteroid constants
-const float MAX_AVX = 50.0f;
-const float MIN_AVX = 30.0f;
-const float ASPAWN_X = 800;
-const float HITPOS_X = -110;
+const float MAX_AVX			= 45.0f;
+const float MIN_AVX			= 30.0f;
+const float ASPAWN_X		= 900.0;
+const float CUTEFACTORY_X	= 60.0;
 const float ASTEROID_RADIUS = 60.0;
 
 //PLATFORMS
@@ -114,12 +124,14 @@ enum SURFACE_IDS {
 	
 	//UI STUFF
 	SURFID_LIFEBAR,
+	SURFID_ARROW,
 	SURFID_LIFEBARDIFF,
 	SURFID_LIFEBARWHITE,
 	SURFID_LIFECONTAINER,
 	SURFID_ZEROPORTRAIT,
 	SURFID_UINUMBERS,
-	SURFID_UILARGENUMBERS
+	SURFID_UILARGENUMBERS,
+	SURFID_SLASHERLOGO
 };
 
 enum direction_t {
@@ -147,5 +159,6 @@ enum ZERO_STATES {
 
 extern float previousTime;				// time of last update
 extern float dt;
+extern bool gameOn;
 
 #endif
