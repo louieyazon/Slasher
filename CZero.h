@@ -69,7 +69,7 @@ protected:
 	void gravity();
 	void grind(float* v);
 	void boundme (int* val, int min, int max);
-	
+	bool AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB);
 
 	// moves
 	void accelerate_up();
@@ -99,6 +99,8 @@ protected:
 	float timeSinceLastPoint;
 	void earnTimePoints();
 
+	//
+	bool attackCheck(int slashnum, GD4N::CGameObject* other);
 
 public:
 	CZero();
@@ -187,4 +189,27 @@ const animPart aCycle[] = {
 		{ sizeof(sfZeroDSlash)/sizeof(int)	,	0.025f,		false	,	(int*)&sfZeroDSlash		, AS_STANDING	} //zero dashing slash
 };
 
+typedef struct slashCircle {
+	float radius;
+	float x_offset;
+	float y_offset;
+	float damage;
+} slashBoxspec;
+
+enum slashBoxIDs {
+	SLASH_GROUND1 = 0,
+	SLASH_GROUND2,
+	SLASH_GROUND3,
+	SLASH_AIR,
+	SLASH_DASH
+};
+
+const slashBoxspec slashCircles[] = {
+ // {radius,		x_offset,		y_offset,		damage}
+	{25	,			3,				-5	,			30},
+	{5	,			10,				-5	,			30},
+	{30	,			3,				-5	,			60},
+	{25	,			3,				-5	,			40},
+	{25	,			3,				-5	,			50}
+};
 #endif

@@ -12,7 +12,7 @@ CAsteroid::CAsteroid(float spawndelay) : CGameObject() {
 	radius = ASTEROID_RADIUS;
 	spriteTimeBetween = 0.02;
 	spriteTimeLast = sTime->GetTime();
-
+	type = TYPE_ASTEROID;
 
 
 	generateNextY();

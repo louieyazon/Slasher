@@ -9,6 +9,7 @@
 #include "CZero.h"
 #include "SlasherUtil.h"
 #include "CPlatform.h"
+#include "CAsteroid.h"
 #include <cmath>
 
 CZero::CZero() : CGameObject() {
@@ -412,33 +413,45 @@ void CZero::slash(int slashnum){
 bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
 		case TYPE_PLATFORM:
-			CPlatform* platform = dynamic_cast<CPlatform*>(other);
+			{
+				CPlatform* platform = dynamic_cast<CPlatform*>(other);
 
-			int diffpos_x = position.x - platform->position.x;						// + if position.value is greater
-			int diffpos_y = position.y - platform->position.y;						// - if position.value is less
-			int diffpos_yUnder = (position.y + 2) - platform->position.y;
+				int diffpos_x = position.x - platform->position.x;						// + if position.value is greater
+				int diffpos_y = position.y - platform->position.y;						// - if position.value is less
+				int diffpos_yUnder = (position.y + 2) - platform->position.y;
 
-			bool isYCollide			=	abs(diffpos_y) < platform->GetHeight()/2;		// y within platform rectangle
-			bool isXCollide			=	abs(diffpos_x) < platform->GetWidth()/2;		// within width of platform
-			bool isYCollideUnder	=	abs(diffpos_yUnder) < platform->GetHeight()/2;
+				bool isYCollide			=	abs(diffpos_y) < platform->GetHeight()/2;		// y within platform rectangle
+				bool isXCollide			=	abs(diffpos_x) < platform->GetWidth()/2;		// within width of platform
+				bool isYCollideUnder	=	abs(diffpos_yUnder) < platform->GetHeight()/2;
 				
-			if(vy > 0	&&	isYCollide	&& isXCollide) {	// going down & position.xy is within platform rectangle
-				return true;
-			} else if (isYCollideUnder && !isXCollide) {	// position.x not within platform width & position.y is right above platform rectangle.
-				falling = true;
-				return false;
-			} 
+				if(vy > 0	&&	isYCollide	&& isXCollide) {	// going down & position.xy is within platform rectangle
+					return true;
+				} else if (isYCollideUnder && !isXCollide) {	// position.x not within platform width & position.y is right above platform rectangle.
+					falling = true;
+					return false;
+				}
+			}
 			break;
-	}
+		case TYPE_ASTEROID:			
+			return attackCheck(attacknum, other);
+			break;			
+	};
 	return false;
 }
 void CZero::CollidesWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
 		case TYPE_PLATFORM:
-			CPlatform* platform = dynamic_cast<CPlatform*>(other);
-			position.y = platform->position.y;
-			land();
-			break;    
+			{
+				CPlatform* platform = dynamic_cast<CPlatform*>(other);
+				position.y = platform->position.y;
+				land();
+			}
+			break;
+		case TYPE_ASTEROID:
+			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
+			asteroid->explode();
+			points = points + 100;
+			break;
     };
 }
 
@@ -502,4 +515,31 @@ void CZero::drawSlashAfter(const int x, const int y) {
 void CZero::debugNumber(const int x, const int y, const int digits, const float* number){
 	int debugfloat = *number;
 	debugNumber(x, y, digits, &debugfloat);
+}
+
+bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
+	CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
+
+	slashCircle thisSlash;
+	switch(attacknum) {
+		case 0: return false;
+		case 1: thisSlash = slashCircles[SLASH_GROUND1];	break;
+		case 2: thisSlash = slashCircles[SLASH_GROUND2];	break;
+		case 3: thisSlash = slashCircles[SLASH_GROUND3];	break;
+		case 13: thisSlash = slashCircles[SLASH_AIR];	break;
+		case 17: thisSlash = slashCircles[SLASH_DASH];	break;
+	};
+
+	float slashX = position.x + thisSlash.x_offset;
+	float slashY = position.y + thisSlash.y_offset;
+	float slashRadius = thisSlash.radius;
+	
+	bool isAHit = AreCirclesIntersecting(slashX, slashY, slashRadius, asteroid->position.x, asteroid->position.y, asteroid->radius);
+
+	return isAHit;
+}
+
+bool CZero::AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB) {
+	float distanceSq = (posAX - posBX) * (posAX - posBX) + (posAY - posBY) * (posAY - posBY);
+	return ( (radiusA + radiusB) * (radiusA + radiusB) > distanceSq );
 }
