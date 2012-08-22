@@ -111,9 +111,8 @@ void CZUILifebar::showHighScoreNumber() {
 	drawNumber(*UIhighscoresource, posHighscorelabel.x + 45, posHighscorelabel.y + 9, 8, NULL, true, true, UIHighscoreNumbersTexture);
 }
 void CZUILifebar::showMultiplierNumber() {
-	drawNumber(*UImultipliersource, 405, 68, NULL, NULL, false, true, UIHighscoreNumbersTexture);
+	drawNumber(*UImultipliersource, 415, 68, 8, NULL, false, true, UIHighscoreNumbersTexture);
 }
-
 
 void CZUILifebar::Update() {
 	/*if(	(rand() % 200)	==	1) {		//take random damage at random intervals for testing
@@ -156,7 +155,6 @@ void CZUILifebar::equalize() {
 
 }
 
-
 void CZUILifebar::setLifeSource(float* lifesource){
 	UIlifesource = lifesource;
 }
@@ -184,7 +182,6 @@ void CZUILifebar::setTargetPercents() {
 	if (lifeTargetPercent <= 0)		lifeTargetPercent = 0;
 	if (comboTargetPercent >= 100)	comboTargetPercent = 100;
 }
-
 
 
 void CZUILifebar::drawNumber(const int numberToPrint, const int x, const int y, int charwidth, int digitsToShow, bool addSpacing, bool useKerning, GD4N::CSurfaceSheet* numberSprite) {
