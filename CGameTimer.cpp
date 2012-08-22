@@ -1,6 +1,8 @@
 #include "CGameTimer.h"
 #include "SVideoManager.h"
 #include "constants.h"
+#include "STimeManager.h"
+#include <time.h>
 
 float previousTime;				// time of last update
 float dt;

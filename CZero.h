@@ -5,6 +5,8 @@
 #include "TVector2.h"
 #include "CSurfaceSheet.h"
 #include "constants.h"
+#include <iostream>
+#include <fstream>
 
 
 class CZero: public GD4N::CGameObject {
@@ -70,6 +72,7 @@ protected:
 	void grind(float* v);
 	void boundme (int* val, int min, int max);
 	bool AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB);
+	bool attackCheck(int slashnum, GD4N::CGameObject* other);
 
 	// moves
 	void accelerate_up();
@@ -91,6 +94,7 @@ protected:
 	void land();
 	int attacknum;
 	bool dashslashing;
+	bool isDropping;
 
 	void disableDash();
 	void reenableDash();
@@ -98,12 +102,14 @@ protected:
 	//points system
 	float timeSinceLastPoint;
 	void earnTimePoints();
-
-	//
-	bool attackCheck(int slashnum, GD4N::CGameObject* other);
+	float lastKillTime;
+	int comboCount;
+	
+	int* highScorePtr;
+	CSlasherGameManager* gameManagerPtr;
 
 public:
-	CZero();
+	CZero(CSlasherGameManager* gameManager);
 	~CZero();
 	const GD4N::TVector2<int> & GetPosition() { return position; };
 
@@ -206,10 +212,13 @@ enum slashBoxIDs {
 
 const slashBoxspec slashCircles[] = {
  // {radius,		x_offset,		y_offset,		damage}
-	{25	,			3,				-5	,			30},
-	{5	,			10,				-5	,			30},
-	{30	,			3,				-5	,			60},
-	{25	,			3,				-5	,			40},
-	{25	,			3,				-5	,			50}
+	{29	,			25,				-28	,			30},
+	{9	,			53,				-19	,			30},
+	{37	,			31,				-27	,			60},
+	{22	,			34,				-24	,			40},
+	{18	,			57,				-19	,			50}
 };
+
+const int slash2CircleOffset = 38;
+const int slashDashCircleOffset = 18*2;
 #endif

@@ -12,8 +12,12 @@
 #include "CAsteroid.h"
 #include <cmath>
 
-CZero::CZero() : CGameObject() {
-	hitpoints		= 100.00;
+CZero::CZero(CSlasherGameManager* gameManager) : CGameObject() {
+	
+	highScorePtr = &gameManager->highScore;
+	gameManagerPtr = gameManager;
+
+	hitpoints		= MAX_HP;
 	points			= 0;
 	//PHYSICS
 	position.x		= STARTING_X;
@@ -35,7 +39,8 @@ CZero::CZero() : CGameObject() {
 
 	falling			= true;
 	dashing			= false;
-	
+	isDropping		= false;
+
 	dashslashing	= false;
 	attacknum		= 0;
 	previousTime	= SDL_GetTicks() * 0.01f;
@@ -49,10 +54,10 @@ CZero::CZero() : CGameObject() {
 	spriteTimeBetween = 1.0000/60.0000;
 	spriteTimeLast = sTime->GetTime();
 
+	lastKillTime = 0;
+	comboCount = 0;
 
 	timeSinceLastPoint = sTime->GetTime();
-
-
 
 
 	UINumbersTexture = new GD4N::CSurfaceSheet(SURFID_UINUMBERS);
@@ -119,6 +124,9 @@ void CZero::ReactToInput(){
 	//prevent hopping (by holding jump key)
 	if(!sInput->GetKey(KEYBIND_JUMP) && !sInput->GetKey(KEYBIND_JUMP2) && !falling)	{		reenableJump();			}	//re-enable jumping only when jump key is released and player has landed on the ground
 	if(!sInput->GetKey(KEYBIND_DASH) && !sInput->GetKey(KEYBIND_DASH2) && !dashing)	{		reenableDash();			}	//re-enable jumping only when jump key is released and player has landed on the ground
+	
+	if(sInput->GetKeyDown(KEYBIND_DOWN) && position.y != FLOORLEVEL) { isDropping = true; }
+	if(sInput->GetKeyUp(KEYBIND_DOWN)) { isDropping = false; }
 }
 void CZero::disableJump() {
 	jumpfuel = 0;
@@ -156,7 +164,9 @@ void CZero::readState() {
 
 	lastZeroState = zeroState;
 	// DEBUG DEBUG DEBUG
-	if (hitpoints <= 0) hitpoints = 100.00;
+	if (hitpoints <= 0){ 
+	gameManagerPtr->setHighScore(points);
+	sGameManager->ChangeScene(0);}
 }
 
 // POINTS
@@ -183,6 +193,7 @@ void CZero::bound() {
 	
 	if(position.y > FLOORLEVEL) {					//	floor boundary
 		position.y = FLOORLEVEL;
+		isDropping = false;
 		land();										// stops gravity, removes vy, plays landing animation
 	}
 }
@@ -424,16 +435,19 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 				bool isXCollide			=	abs(diffpos_x) < platform->GetWidth()/2;		// within width of platform
 				bool isYCollideUnder	=	abs(diffpos_yUnder) < platform->GetHeight()/2;
 				
-				if(vy > 0	&&	isYCollide	&& isXCollide) {	// going down & position.xy is within platform rectangle
+				if(vy > 0	&&	isYCollide	&& isXCollide && !isDropping) {	// going down & position.xy is within platform rectangle
 					return true;
-				} else if (isYCollideUnder && !isXCollide) {	// position.x not within platform width & position.y is right above platform rectangle.
+				} else if ((isYCollideUnder && !isXCollide) || isDropping) {	// position.x not within platform width & position.y is right above platform rectangle.
 					falling = true;
 					return false;
 				}
 			}
 			break;
-		case TYPE_ASTEROID:			
-			return attackCheck(attacknum, other);
+		case TYPE_ASTEROID:
+			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
+			if(!asteroid->exploded){
+				return attackCheck(attacknum, other);
+			}
 			break;			
 	};
 	return false;
@@ -450,7 +464,16 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 		case TYPE_ASTEROID:
 			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
 			asteroid->explode();
-			points = points + 100;
+			
+			if(sTime->GetTime() - lastKillTime <= COMBO_WINDOW){
+				comboCount++;
+				if(comboCount == 50) hitpoints = MAX_HP;
+			} else {
+				comboCount = 1;
+			}
+			
+			lastKillTime = sTime->GetTime();
+			points = points + KILLSCORE*((comboCount/5) + 1);
 			break;
     };
 }
@@ -476,8 +499,8 @@ void CZero::DrawDebug(){
 	
 	debugNumber(200, 570, 2, &attacknum);
 
-
-	
+	debugNumber(700, 10, 3, &comboCount);
+	debugNumber(700, 570, 10, highScorePtr);
 
 	//timer debug
 	int checktime = sTime->GetTime();
@@ -520,8 +543,6 @@ void CZero::debugNumber(const int x, const int y, const int digits, const float*
 bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
 	CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
 
-	if(asteroid->exploded) return false;
-
 	slashCircle thisSlash;
 	switch(attacknum) {
 		case 0: return false;
@@ -531,12 +552,18 @@ bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
 		case 13: thisSlash = slashCircles[SLASH_AIR];	break;
 		case 17: thisSlash = slashCircles[SLASH_DASH];	break;
 	};
-
+	
 	float slashX = position.x + thisSlash.x_offset;
 	float slashY = position.y + thisSlash.y_offset;
 	float slashRadius = thisSlash.radius;
 	
+	if(!facingRight){
+	slashX = position.x - thisSlash.x_offset * 2;
+	}
+
 	bool isAHit = AreCirclesIntersecting(slashX, slashY, slashRadius, asteroid->position.x, asteroid->position.y, asteroid->radius);
+	if(attacknum == 2){
+	}
 
 	return isAHit;
 }

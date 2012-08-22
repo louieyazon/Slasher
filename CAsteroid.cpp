@@ -5,15 +5,16 @@
 #include <ctime>
 #include "SlasherUtil.h"
 #include "SAudioManager.h"
+#include "CGameTimer.h"
 
 CAsteroid::CAsteroid(float spawndelay) : CGameObject() {
+	sceneStartTime = sTime->GetTime();
 	asteroidspawndelay = spawndelay;
 	asteroidOn = false;
 	radius = ASTEROID_RADIUS;
 	spriteTimeBetween = 0.02;
 	spriteTimeLast = sTime->GetTime();
 	type = TYPE_ASTEROID;
-
 
 	generateNextY();
 	Respawn();
@@ -54,8 +55,8 @@ void CAsteroid::Draw() {
 		Animate();
 		drawExplode();
 	} else {
-		drawposition.x = position.x - 40;
-		drawposition.y = position.y - 40;
+		drawposition.x = position.x - 60;
+		drawposition.y = position.y - 60;
 		sVideo->Draw(SURFID_ASTEROID, drawposition);
 	}
 
@@ -91,7 +92,8 @@ void CAsteroid::drawExplode(){
 
 void CAsteroid::Update() {
 	if(!asteroidOn) {
-		if(sTime->GetTime() > asteroidspawndelay) asteroidOn = true;
+		if(sTime->GetTime() > (asteroidspawndelay + sceneStartTime))
+			asteroidOn = true;
 	}
 
 	if(gameOn && asteroidOn){
@@ -141,7 +143,7 @@ void CAsteroid::Respawn() {
 }
 
 void CAsteroid::generateNextY() {
-	next_y = randoValue(0, (int)FLOORLEVEL);
+	next_y = randoValue(ASPAWN_YMIN, ASPAWN_YMAX);
 }
 
 void CAsteroid::setLifeTarget(float* lifetarget) {

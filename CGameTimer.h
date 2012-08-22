@@ -6,6 +6,7 @@
 class CGameTimer: public GD4N::CGameObject {
 protected:
 	void Update();
+	
 public:
 	CGameTimer();
 	~CGameTimer();

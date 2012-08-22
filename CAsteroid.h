@@ -4,6 +4,7 @@
 #include "TVector2.h"
 #include "CGameObject.h"
 #include "CSurfaceSheet.h"
+#include "CGameTimer.h"
 
 class CAsteroid: public GD4N::CGameObject {
 protected:
@@ -30,9 +31,11 @@ protected:
 	int explodeframe3;
 	float spriteTimeLast;
 	float spriteTimeBetween;
+	CGameTimer* timerPtr;
 
 	float* zlifetarget;
 	void generateNextY();
+	float sceneStartTime;
 	
 public:
 	CAsteroid(float spawndelay);

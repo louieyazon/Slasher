@@ -16,19 +16,30 @@
 
 #include "constants.h"
 
+#include <iostream>
+#include <fstream>
+#include <string>
+
 using namespace GD4N;
 bool gameOn = false;
 
 CSlasherGameManager::CSlasherGameManager() {
 	windowTitle = (char *)"Zero Slasher";
+	icon = (char *)"images/icon.bmp";
+	
+	
 }
 
 bool CSlasherGameManager::Init() {
 	sVideo->SetVideoMode(800, 600, 32, SDL_HWSURFACE | SDL_DOUBLEBUF);
+	
+	readHighScoreFile();
+
 	AddScene(CSlasherGameManager::Scene00);
 	ChangeScene(0);
+	
 	if(!CGameManager::Init()) return false;
-
+	
 	return true;
 }
 
@@ -63,15 +74,11 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
 	CSurface::Load((char *)"images/lifebar_diff.png", SURFID_LIFEBARDIFF);
 	CSurface::Load((char *)"images/lifebar_white.png", SURFID_LIFEBARWHITE);
-	CSurface::Load((char *)"images/lifebar_combo.png", SURFID_COMBOBAR);
-	CSurface::Load((char *)"images/highscorelabel.png", SURFID_HIGHSCORELABEL);
 	CSurface::Load((char *)"images/zeroportraitbar.png", SURFID_ZEROPORTRAIT);
 	CSurface::Load((char *)"images/lifebar_holder.png", SURFID_LIFECONTAINER);
 	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
 	CSurface::Load((char *)"images/zerolargenumbers.png", SURFID_UILARGENUMBERS);
-	CSurface::Load((char *)"images/zerohighscorenumbers.png", SURFID_UIHIGHSCORENUMBERS);
 	CSurface::Load((char *)"images/explode.png", SURFID_EXPLODE);
-	
 	if(SHOW_DEBUG_NUMBERS) {
 		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
 	} else {
@@ -90,7 +97,8 @@ void CSlasherGameManager::LoadResources() {
 }
 
 void CSlasherGameManager::Scene00() {
-	new CGameTimer();
+	CGameTimer* Ztimer = new CGameTimer();
+
 	new CBGround();
 	new CPlatform(PLATFORM_1X, PLATFORM_1Y);
 	new CPlatform(PLATFORM_2X, PLATFORM_2Y);
@@ -101,7 +109,7 @@ void CSlasherGameManager::Scene00() {
 	CAsteroid* aster2 = new CAsteroid(SECOND_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster3 = new CAsteroid(THIRD_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster4 = new CAsteroid(FOURTH_ASTEROID_SPAWNDELAY);
-	CZero* zero = new CZero();
+	CZero* zero = new CZero(this);
 	CZUILifebar* lifebar = new CZUILifebar();
 
 	//object communication
@@ -111,4 +119,35 @@ void CSlasherGameManager::Scene00() {
 	aster4->setLifeTarget(&zero->hitpoints);
 	lifebar->setLifeSource(&zero->hitpoints);
 	lifebar->setPointsSource(&zero->points);
+}
+
+void CSlasherGameManager::CleanUp() {
+	writeHighScoreFile();
+	CGameManager::CleanUp();
+}
+
+void CSlasherGameManager::readHighScoreFile(){
+	using namespace std;
+	string highScoreString;
+	ifstream myFile ("highscore.dat");
+	if (myFile.is_open()){
+		while(myFile.good() ){
+			getline (myFile,highScoreString);
+		}
+		myFile.close();
+	}
+	highScore = atoi(highScoreString.c_str() );
+}
+
+void CSlasherGameManager::writeHighScoreFile(){
+	using namespace std;
+	ofstream myFile; 
+	myFile.open("highscore.dat");
+	myFile << highScore;
+	myFile.close();
+}
+
+void CSlasherGameManager::setHighScore(int recentScore){
+	if(recentScore > highScore) 
+		highScore = recentScore;
 }
