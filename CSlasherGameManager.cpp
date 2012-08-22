@@ -113,22 +113,29 @@ void CSlasherGameManager::Scene00() {
 	CAsteroid* aster3 = new CAsteroid(THIRD_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster4 = new CAsteroid(FOURTH_ASTEROID_SPAWNDELAY);
 	CZero* zero = new CZero(this);
-	CZUILifebar* lifebar = new CZUILifebar();
+	CZUILifebar* ZHUD = new CZUILifebar();
 
 	//object communication
 	aster->setLifeTarget(&zero->hitpoints);
 	aster2->setLifeTarget(&zero->hitpoints);
 	aster3->setLifeTarget(&zero->hitpoints);
 	aster4->setLifeTarget(&zero->hitpoints);
-	lifebar->setLifeSource(&zero->hitpoints);
-	lifebar->setPointsSource(&zero->points);
+	ZHUD->setLifeSource(&zero->hitpoints);
+	ZHUD->setPointsSource(&zero->points);
+	ZHUD->setComboSource(&zero->comboTank);
+	ZHUD->setMultiplierSource(&zero->multiplier);
+	ZHUD->setComboThresholdSource(&zero->comboMultiplierThreshold);
+
+	ZHUD->setHighScoreSource(&highScore);
 }
+
+
+
 
 void CSlasherGameManager::CleanUp() {
 	writeHighScoreFile();
 	CGameManager::CleanUp();
 }
-
 void CSlasherGameManager::readHighScoreFile(){
 	using namespace std;
 	string highScoreString;
@@ -141,7 +148,6 @@ void CSlasherGameManager::readHighScoreFile(){
 	}
 	highScore = atoi(highScoreString.c_str() );
 }
-
 void CSlasherGameManager::writeHighScoreFile(){
 	using namespace std;
 	ofstream myFile; 
@@ -149,7 +155,6 @@ void CSlasherGameManager::writeHighScoreFile(){
 	myFile << highScore;
 	myFile.close();
 }
-
 void CSlasherGameManager::setHighScore(int recentScore){
 	if(recentScore > highScore) 
 		highScore = recentScore;

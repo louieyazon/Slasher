@@ -103,7 +103,15 @@ protected:
 	float timeSinceLastPoint;
 	void earnTimePoints();
 	float lastKillTime;
+
+	//combo system
 	int comboCount;
+	float comboPointsPerKill;
+	void earnComboPoints();
+	void decayComboPoints();
+	void earnMultiplier();
+	void decayMultiplier();
+	
 	
 	int* highScorePtr;
 	CSlasherGameManager* gameManagerPtr;
@@ -113,8 +121,12 @@ public:
 	~CZero();
 	const GD4N::TVector2<int> & GetPosition() { return position; };
 
+	//UI needs these
 	float hitpoints;
 	int points;
+	float comboTank;
+	int multiplier;
+	float comboMultiplierThreshold;
 };
 
 enum ZERO_ANIMSTATES {

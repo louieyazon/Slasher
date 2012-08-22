@@ -5,28 +5,32 @@
 #define ZEROSPRITEOFFSET_Y 93
 
 
-const bool SHOW_DEBUG_NUMBERS = true;
+const bool SHOW_DEBUG_NUMBERS = false;
 const bool SHOW_SPRITE_NOTES = false;
 
 //POINTS SYSTEM and PACING
 const float TIME_POINT_RATE				= 0.350f;
-const float ASTEROID_DAMAGE				= 20.0f;
+const float ASTEROID_DAMAGE				= 8.0f;
+
 const float SECOND_ASTEROID_SPAWNDELAY	= 60.0f;
 const float THIRD_ASTEROID_SPAWNDELAY	= 140.0f;
 const float FOURTH_ASTEROID_SPAWNDELAY	= 360.0f;
 const int MAX_HP						= 100;
-const float COMBO_WINDOW				= 3.00f;
 const int KILLSCORE						= 100;
 
+//COMBO SYSTEM
+const float COMBO_WINDOW					= 3.00f;	// time between kills for combo to persist (3.00 seconds to lose 1 point)
+const float BASE_COMBO_POINTS_PER_KILL		= 1.20f;	// combo points to add to COMBO TANK earned per kill
+const float BASE_COMBO_MULTIPLIER_THRESHOLD	= 5.00f;	// points needed to earn the next multiplier
 
 //CONTROLS
-const SDLKey KEYBIND_LEFT	=	SDLK_a;
-const SDLKey KEYBIND_RIGHT	=	SDLK_d;
-const SDLKey KEYBIND_UP		=	SDLK_q;
-const SDLKey KEYBIND_DOWN	=	SDLK_s;
-const SDLKey KEYBIND_JUMP	=	SDLK_w;
-const SDLKey KEYBIND_DASH	=	SDLK_j;
-const SDLKey KEYBIND_ATTACK	=	SDLK_k;
+const SDLKey KEYBIND_LEFT		=	SDLK_a;
+const SDLKey KEYBIND_RIGHT		=	SDLK_d;
+const SDLKey KEYBIND_UP			=	SDLK_q;
+const SDLKey KEYBIND_DOWN		=	SDLK_s;
+const SDLKey KEYBIND_JUMP		=	SDLK_w;
+const SDLKey KEYBIND_DASH		=	SDLK_j;
+const SDLKey KEYBIND_ATTACK		=	SDLK_k;
 
 const SDLKey KEYBIND_LEFT2		=	SDLK_LEFT;
 const SDLKey KEYBIND_RIGHT2		=	SDLK_RIGHT;
@@ -74,6 +78,8 @@ const float CUTEFACTORY_X	= 60.0;
 const float ASTEROID_RADIUS = 55.0;
 const float ASPAWN_YMIN		= 60.0;
 const float ASPAWN_YMAX		= 430.0;
+
+
 //PLATFORMS
 const int PLATFORM_WIDTH	=	110;		const int PLATFORM_HEIGHT	=	35;
 
@@ -94,18 +100,15 @@ const int LIFEBAR_SPRITEHEIGHT	= 12;
 const int LIFEBAR_MAXSPRITEY	= 500 - LIFEBAR_SPRITEHEIGHT;
 const float LIFEBAR_UPDATERATE	= 0.033f;
 const int LIFEBAR_MAXWIDTH		= 300;
-
-
-const int COMBOBAR_OFFSETX		= -45;
+//COMBO BAR UI
+const int COMBOBAR_OFFSETX		= -35;
 const int COMBOBAR_OFFSETY		= 15;
 const int COMBOBAR_MAXWIDTH		= 300;
 const int COMBOBAR_SPRITEHEIGHT = 3;
 const int COMBOBAR_MAXSPRITEY	= 500 - COMBOBAR_SPRITEHEIGHT;
 
-const int HIGHSCORE_LABEL_OFFSETX = 250;
+const int HIGHSCORE_LABEL_OFFSETX = 220;
 const int HIGHSCORE_LABEL_OFFSETY = -48;
-
-
 
 
 enum SFX_IDS {

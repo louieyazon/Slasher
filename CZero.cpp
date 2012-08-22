@@ -19,6 +19,13 @@ CZero::CZero(CSlasherGameManager* gameManager) : CGameObject() {
 
 	hitpoints		= MAX_HP;
 	points			= 0;
+
+	//combo system
+	comboTank				 = 0.0;
+	comboPointsPerKill		 = BASE_COMBO_POINTS_PER_KILL;
+	comboMultiplierThreshold = BASE_COMBO_MULTIPLIER_THRESHOLD;
+	multiplier				 = 1;
+
 	//PHYSICS
 	position.x		= STARTING_X;
 	position.y		= STARTING_Y;
@@ -87,6 +94,7 @@ void CZero::Update() {
 		logicTimeLast = sTime->GetTime();
 	}*/
 	earnTimePoints();
+	decayComboPoints();
 	ReactToInput();
 	Physics();
 	readState();
@@ -146,10 +154,9 @@ void CZero::readState() {
 	if(!falling){	//on the ground
 		int nvx = (vx * dt);
 		if(nvx == 0)			{	zeroState = STATE_STANDING; dashslashing = false;}		// not moving
-		else if(!dashing)		{	zeroState = STATE_RUNNING;	}		// moving		
+		else if(!dashing)		{	zeroState = STATE_RUNNING;	}							// moving		
 		else					{	zeroState = STATE_DASHING;	}
 		
-
 		if(dashfuel <= 0)		{	dashing = false;			}
 	}
 
@@ -174,6 +181,32 @@ void CZero::earnTimePoints() {
 	if(sTime->GetTime() - timeSinceLastPoint >= TIME_POINT_RATE) {
 		timeSinceLastPoint = sTime->GetTime();
 		points++;
+	}
+}
+void CZero::earnComboPoints() {
+	if(sTime->GetTime() - lastKillTime <= COMBO_WINDOW){
+		comboCount++;								//eventually remove this
+		if(multiplier == 10) hitpoints += MAX_HP/5;	//eventually update with new healing
+
+		comboTank += comboPointsPerKill;
+		if(comboTank >= comboMultiplierThreshold) earnMultiplier();
+	} else {
+		comboCount = 1;								//reset combo points, remove in new system
+	}
+}
+void CZero::earnMultiplier() {
+	comboTank = 1;
+	multiplier += 1;
+}
+void CZero::decayComboPoints(){
+	comboTank -= dt / (COMBO_WINDOW * 10);
+	if(comboTank < 0) decayMultiplier();
+}
+void CZero::decayMultiplier(){
+	comboTank = 0;
+	if(multiplier > 1)	{
+		comboTank = comboMultiplierThreshold / 2;
+		multiplier--;
 	}
 }
 
@@ -464,16 +497,10 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 		case TYPE_ASTEROID:
 			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
 			asteroid->explode();
-			
-			if(sTime->GetTime() - lastKillTime <= COMBO_WINDOW){
-				comboCount++;
-				if(comboCount == 50) hitpoints = MAX_HP;
-			} else {
-				comboCount = 1;
-			}
-			
+			earnComboPoints();
+
 			lastKillTime = sTime->GetTime();
-			points = points + KILLSCORE*((comboCount/5) + 1);
+			points += KILLSCORE*(multiplier);
 			break;
     };
 }
@@ -499,8 +526,8 @@ void CZero::DrawDebug(){
 	
 	debugNumber(200, 570, 2, &attacknum);
 
-	debugNumber(700, 10, 3, &comboCount);
-	debugNumber(700, 570, 10, highScorePtr);
+	//debugNumber(700, 10, 3, &comboCount);
+	//debugNumber(700, 570, 10, highScorePtr);
 
 	//timer debug
 	int checktime = sTime->GetTime();

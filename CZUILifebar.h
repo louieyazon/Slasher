@@ -36,6 +36,12 @@ protected:
 	float* UIlifesource;
 	int* UIpointsource;
 	float* UIcombosource;
+	float* UIcombothresholdsource;
+	int* UIhighscoresource;
+	int* UImultipliersource;
+
+	
+
 
 	//score
 	GD4N::CSurfaceSheet *UINumbersTexture;
@@ -46,6 +52,8 @@ protected:
 	//points
 	void showPointsNumber();
 	void showHighScoreNumber();
+	void showMultiplierNumber();
+
 
 	//number drawing
 	void drawNumber(const int numberToPrint, const int x, const int y, int charwidth, int digitsToShow, bool addSpacing, bool useKerning, GD4N::CSurfaceSheet* numberSprite);
@@ -57,10 +65,16 @@ public:
 	int width;
 	int height;
 
-	void setTargetPercent(float x);
+	void setTargetPercents();
 	void decreaseTargetPercent(float x);
+
+	//source setters
 	void setLifeSource(float* lifesource);
 	void setPointsSource(int* pointsource);
+	void setComboSource(float* combosource);
+	void setHighScoreSource(int* highscoresource);
+	void setMultiplierSource(int* multipliersource);
+	void setComboThresholdSource(float* threshold);
 
 	//general UI position
 	GD4N::TVector2<int> logoposition;

@@ -54,7 +54,6 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 	UIHighscoreNumbersTexture = new GD4N::CSurfaceSheet(SURFID_UIHIGHSCORENUMBERS);
 	UIHighscoreNumbersTexture->SetSpriteDimensions(1,10);
 }
-
 CZUILifebar::~CZUILifebar() {
 	delete UINumbersTexture;
 }
@@ -65,9 +64,6 @@ void CZUILifebar::Draw() {
 	drawPoints();
 	if(!gameOn) drawLogo();
 }
-
-
-
 void CZUILifebar::drawUI(){
 	drawComboBar();
 	
@@ -79,6 +75,7 @@ void CZUILifebar::drawUI(){
 void CZUILifebar::drawPoints(){
 	showPointsNumber();
 	showHighScoreNumber();
+	showMultiplierNumber();
 }
 void CZUILifebar::drawHealth(){
 	sVideo->Draw(SURFID_LIFEBARDIFF, position, srcposition_lag, width, height);				// RED LAGGING LIFEBAR
@@ -111,18 +108,20 @@ void CZUILifebar::showPointsNumber() {
 	drawNumber(*UIpointsource, 340, 10, 21, 8, false, false, UINumbersTexture);
 }
 void CZUILifebar::showHighScoreNumber() {
-	drawNumber(1121775475, 450, 10, 8, NULL, true, true, UIHighscoreNumbersTexture);
+	drawNumber(*UIhighscoresource, posHighscorelabel.x + 45, posHighscorelabel.y + 9, 8, NULL, true, true, UIHighscoreNumbersTexture);
+}
+void CZUILifebar::showMultiplierNumber() {
+	drawNumber(*UImultipliersource, 405, 68, NULL, NULL, false, true, UIHighscoreNumbersTexture);
 }
 
 
-
 void CZUILifebar::Update() {
-	if(	(rand() % 200)	==	1) {		//take random damage at random intervals for testing
+	/*if(	(rand() % 200)	==	1) {		//take random damage at random intervals for testing
 		comboTargetPercent += (rand() % 10) + 5;
 		if (comboTargetPercent >= 100) comboTargetPercent = 0;
-	}	
+	}*/	
 
-	setTargetPercent(*UIlifesource);
+	setTargetPercents();
 	equalize();
 	targetsrcposition.y = 0 + (int)((100 - lifeTargetPercent) / 100 * LIFEBAR_MAXSPRITEY);
 	combotargetsrcposition.y = 0 + (int)((100 - comboTargetPercent) / 100 * COMBOBAR_MAXSPRITEY);
@@ -164,14 +163,26 @@ void CZUILifebar::setLifeSource(float* lifesource){
 void CZUILifebar::setPointsSource(int* pointsource){
 	UIpointsource = pointsource;
 }
-
-void CZUILifebar::setTargetPercent(float x) {
-	lifeTargetPercent = x;
-	if (lifeTargetPercent <= 0) lifeTargetPercent = 0;
+void CZUILifebar::setComboSource(float* combosource){
+	UIcombosource = combosource;
 }
-void CZUILifebar::decreaseTargetPercent(float d) {
-	setTargetPercent(lifeTargetPercent - d);
-	flashing = 1;
+void CZUILifebar::setHighScoreSource(int* highscoresource){
+	UIhighscoresource = highscoresource;
+}
+
+void CZUILifebar::setMultiplierSource(int* multipliersource){
+	UImultipliersource = multipliersource;
+}
+void CZUILifebar::setComboThresholdSource(float* threshold){
+	UIcombothresholdsource = threshold;
+}
+
+void CZUILifebar::setTargetPercents() {
+	lifeTargetPercent = *UIlifesource;
+	comboTargetPercent = (*UIcombosource / *UIcombothresholdsource) * 100.0;
+
+	if (lifeTargetPercent <= 0)		lifeTargetPercent = 0;
+	if (comboTargetPercent >= 100)	comboTargetPercent = 100;
 }
 
 
