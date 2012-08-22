@@ -125,8 +125,8 @@ void CZero::ReactToInput(){
 	if(!sInput->GetKey(KEYBIND_JUMP) && !sInput->GetKey(KEYBIND_JUMP2) && !falling)	{		reenableJump();			}	//re-enable jumping only when jump key is released and player has landed on the ground
 	if(!sInput->GetKey(KEYBIND_DASH) && !sInput->GetKey(KEYBIND_DASH2) && !dashing)	{		reenableDash();			}	//re-enable jumping only when jump key is released and player has landed on the ground
 	
-	if(sInput->GetKeyDown(KEYBIND_DOWN) && position.y != FLOORLEVEL) { isDropping = true; }
-	if(sInput->GetKeyUp(KEYBIND_DOWN)) { isDropping = false; }
+	if((sInput->GetKeyDown(KEYBIND_DOWN) || sInput->GetKeyDown(KEYBIND_DOWN2))  && position.y != FLOORLEVEL) { isDropping = true; }
+	if(sInput->GetKeyUp(KEYBIND_DOWN) || sInput->GetKeyUp(KEYBIND_DOWN2) )									 { isDropping = false; }
 }
 void CZero::disableJump() {
 	jumpfuel = 0;
@@ -542,7 +542,9 @@ void CZero::debugNumber(const int x, const int y, const int digits, const float*
 
 bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
 	CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-
+	
+	if(asteroid->exploded) return false;		// don't even consider colliding with an exploded asteroid
+	
 	slashCircle thisSlash;
 	switch(attacknum) {
 		case 0: return false;
