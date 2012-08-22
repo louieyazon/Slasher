@@ -1,39 +1,48 @@
 ZERO ASTEROID SLASHER
+=============
 
 TODO FOR MILESTONE 1.0.0 (for submission)
-- Combo points system
-- 
+-------
+* Combo points system
+*
 
 TODO FOR MILESTONE 1.1.0
-UI:
-	- Show high score at the start of the game.
-	- Emphasize score earned at the end of a game.
-TECHNICAL:
-	- Switch highscore file to binary format and encrypt.
-	- Configuration file for keybinds.
-GAMEPLAY MECHANICS:
-  - Health drops
-	- Further balance gameplay
-		- consider slower asteroids with HP
-  - Add more moves
+-------
+###  UI
+
+* Show high score at the start of the game.
+* Emphasize score earned at the end of a game.
+
+###  TECHNICAL
+
+* Switch highscore file to binary format and encrypt.
+* Configuration file for keybinds.
+
+###  GAMEPLAY MECHANICS
+
+* Health drops
+* Further balance gameplay
+	- consider slower asteroids with HP
+	- Add more moves
 		- double jump
 		- special attack button
 			- rising attack
 			- diving attack
 			- screen-wide AOE attack with large cooldown
-EYE/EARCANDY:
-  - Add health drop sprite with animation
-	- Add slash effects
-		- incorporate slash sprite into Zero object
-		- find sound resourec
-		- add sound
-	- Add asteroid fragments on explode()
+###  EYE/EARCANDY
+* Add health drop sprite with animation
+* Add slash effects
+	- incorporate slash sprite into Zero object
+	- find sound resourec
+	- add sound
+* Add asteroid fragments on explode()
 
 
 
-TODO SOMEDAY (in our spare time)
-- Port to OpenGL-based engine
-- Joystick/gamepad support (SDL supports this, but let's try to look for an engine that actually allows us to rotate and flip sprites.)
-- 2 Players? (keyboard + gamepad)
-- Larger area (with camera panning)
-- other enemies
+TODO SOMEDAY/WHEN BORED OUT OF SKULL
+-------
+* Port to OpenGL-based engine
+* Joystick/gamepad support (SDL supports this, but let's try to look for an engine that actually allows us to rotate and flip sprites.)
+* 2 Players? (keyboard + gamepad)
+* Larger area (with camera panning)
+* other enemies
