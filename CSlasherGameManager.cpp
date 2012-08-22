@@ -63,11 +63,15 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
 	CSurface::Load((char *)"images/lifebar_diff.png", SURFID_LIFEBARDIFF);
 	CSurface::Load((char *)"images/lifebar_white.png", SURFID_LIFEBARWHITE);
+	CSurface::Load((char *)"images/lifebar_combo.png", SURFID_COMBOBAR);
+	CSurface::Load((char *)"images/highscorelabel.png", SURFID_HIGHSCORELABEL);
 	CSurface::Load((char *)"images/zeroportraitbar.png", SURFID_ZEROPORTRAIT);
 	CSurface::Load((char *)"images/lifebar_holder.png", SURFID_LIFECONTAINER);
 	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
 	CSurface::Load((char *)"images/zerolargenumbers.png", SURFID_UILARGENUMBERS);
+	CSurface::Load((char *)"images/zerohighscorenumbers.png", SURFID_UIHIGHSCORENUMBERS);
 	CSurface::Load((char *)"images/explode.png", SURFID_EXPLODE);
+	
 	if(SHOW_DEBUG_NUMBERS) {
 		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
 	} else {

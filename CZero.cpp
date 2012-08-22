@@ -520,6 +520,8 @@ void CZero::debugNumber(const int x, const int y, const int digits, const float*
 bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
 	CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
 
+	if(asteroid->exploded) return false;
+
 	slashCircle thisSlash;
 	switch(attacknum) {
 		case 0: return false;

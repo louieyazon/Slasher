@@ -133,6 +133,7 @@ void CAsteroid::bound() {
 void CAsteroid::Respawn() {
 	exploded		= false;
 	explodeframe	= -1;
+	explodeframe3	= 0;
 	position.x		= ASPAWN_X;
 	position.y		= next_y;
 	vx				= randoValue(MIN_AVX, MAX_AVX);
