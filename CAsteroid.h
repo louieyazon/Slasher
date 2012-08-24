@@ -10,6 +10,7 @@
 typedef struct oneExplode {
 	GD4N::CSurfaceSheet* explodesheet;
 	int frame;
+
 	GD4N::TVector2<int> position;
 	GD4N::TVector2<int> initoffset;
 	GD4N::TVector2<int> v;
@@ -76,7 +77,7 @@ public:
 	~CAsteroid();
 
 	void explode();
-	bool takeDamage(int dmg);
+	bool takeDamage(int dmg, float vx, float vy);
 	bool exploded;
 	int hitpoints;
 

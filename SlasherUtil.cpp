@@ -20,8 +20,15 @@ int randoValue(int min, int max) {
 	return (    (rand() % (max - min)) + min    );
 }
 
-
-
 int round(float x){
 	return (int)(x + 0.5);
-};
+}
+
+float CirclesIntersection(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB) {
+	float distanceSq = (posAX - posBX) * (posAX - posBX) + (posAY - posBY) * (posAY - posBY);
+	return ((radiusA + radiusB) * (radiusA + radiusB)) - distanceSq;
+}
+
+bool AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB) {
+	return (CirclesIntersection(posAX, posAY, radiusA, posBX, posBY, radiusB) > 0);
+}

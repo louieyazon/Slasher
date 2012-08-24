@@ -212,8 +212,8 @@ void CAsteroid::explode() {
 void CAsteroid::setExplodeInitPositions(){
 	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
 		
-		if(r < 4) flyingbits[r].position.Assign (	position.x + flyingbits[r].initoffset.x		,		position.y + flyingbits[r].initoffset.y	);
-		explosion[r].position.Assign			(  position.x + explosion[r].initoffset.x		,		position.y + explosion[r].initoffset.y  );
+		if(r < 4) flyingbits[r].position.Assign (	position.x + flyingbits[r].initoffset.x		,	position.y + flyingbits[r].initoffset.y	);
+		explosion[r].position.Assign			(   position.x + explosion[r].initoffset.x		,	position.y + explosion[r].initoffset.y  );
 	}
 	randAsteroidBitspeed();
 }
@@ -225,7 +225,7 @@ void CAsteroid::randAsteroidBitspeed() {
 }
 
 
-bool CAsteroid::takeDamage(int dmg) {
+bool CAsteroid::takeDamage(int dmg, float vx, float vy) {
 	hitpoints -= dmg;
 	if(hitpoints < 0) { 
 		explode();

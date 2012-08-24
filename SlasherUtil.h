@@ -7,5 +7,7 @@ int signof(int x) ;
 int randoValue(int min, int max);
 
 int round(float x);
+float CirclesIntersection(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB);
+bool AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB);
 
 #endif

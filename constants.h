@@ -9,7 +9,7 @@
 const bool SHOW_DEBUG_NUMBERS = true;
 const bool SHOW_SPRITE_NOTES = false;
 
-#define EXPLODE_SPRITES_PER_ASTEROID	5
+#define EXPLODE_SPRITES_PER_ASTEROID 5
 
 /**
  **

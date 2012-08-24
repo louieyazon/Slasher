@@ -496,6 +496,7 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 }
 void CZero::CollidesWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
+
 		case TYPE_PLATFORM:
 			{
 				CPlatform* platform = dynamic_cast<CPlatform*>(other);
@@ -503,15 +504,16 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 				land();
 			}
 			break;
+
 		case TYPE_ASTEROID:
 			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-			bool killed = asteroid->takeDamage(20);
+			bool killed = asteroid->takeDamage(20, 0, 0);
 			if(killed) {
 				earnComboPoints();
 				lastKillTime = sTime->GetTime();
 				points += KILLSCORE*(multiplier);
 			}
-				break;
+			break;
     };
 }
 bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
@@ -536,10 +538,7 @@ bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
 
 	return isAHit;
 }
-bool CZero::AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB) {
-	float distanceSq = (posAX - posBX) * (posAX - posBX) + (posAY - posBY) * (posAY - posBY);
-	return ( (radiusA + radiusB) * (radiusA + radiusB) > distanceSq );
-}
+
 
 // DEBUG NUMBERS
 void CZero::DrawDebug(){

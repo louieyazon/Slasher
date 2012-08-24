@@ -19,102 +19,96 @@ protected:
 	void Physics();
 	bool IsCollidingWith(GD4N::CGameObject* other);
     void CollidesWith(GD4N::CGameObject* other);
+
 	GD4N::TVector2<int> position;
 	GD4N::CSurfaceSheet *zeroTexture;
 	GD4N::CSurfaceSheet *zeroTextureL;
 
-	void DrawDebug();
-	void debugNumber(const int x, const int y, const int digits, const int* number);
-	void drawSlashAfter(const int x, const int y);
-	void debugNumber(const int x, const int y, const int digits, const float* number);
-	GD4N::CSurfaceSheet *UINumbersTexture;
+	// animation and sound
+		float spriteTimeLast;
+		float spriteTimeBetween;
+		int curFrame;
+		int drawFrame;
+		void setAnimationState();
+		void forwardFrame();
+		void decideFrame();
+		void nextAnimState();
+		void frameSound();
 
-	
-	//float logicTimeLast;
-	//float logicTimeBetween;
-
-
-	// animation
-	float spriteTimeLast;
-	float spriteTimeBetween;
-	int curFrame;
-	int drawFrame;
-	void setAnimationState();
-	void forwardFrame();
-	void decideFrame();
-	void nextAnimState();
-	void frameSound();
-
-	
 	int animZeroState;
 	int animLastZeroState;
 
 	// nonposition object states
-	void readState();
+		void readState();
 	
-	bool falling;					// falling tracks when to apply gravity (when you're jumping or not on the ground)
-	bool dashing;
-	bool facingRight;
+		bool falling;					// falling tracks when to apply gravity (when you're jumping or not on the ground)
+		bool dashing;
+		bool facingRight;
 
-	int zeroState;
-	int lastZeroState;				// probably won't need this anymore
-	float jumpfuel;	float jumpmax;	// jump limiter, also allows jumping of different heights
-	float dashfuel; float dashmax;	// dash limiter, also allows dashing of different distances
+		int zeroState;
+		int lastZeroState;				// probably won't need this anymore
+		float jumpfuel;	float jumpmax;	// jump limiter, also allows jumping of different heights
+		float dashfuel; float dashmax;	// dash limiter, also allows dashing of different distances
 
 	// physics
-	float vy;	float vx;	float vx_max;	float vy_max;
-	float ay;	float ax;
-	float fricx;
-	void move();
-	void bound();
-	void friction();
-	void gravity();
-	void grind(float* v);
-	void boundme (int* val, int min, int max);
-	bool AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB);
-	bool attackCheck(int slashnum, GD4N::CGameObject* other);
+		float vy;	float vx;	float vx_max;	float vy_max;
+		float ay;	float ax;
+		float fricx;
+		void move();
+		void bound();
+		void friction();
+		void gravity();
+		void grind(float* v);
+		void boundme (int* val, int min, int max);
+		bool attackCheck(int slashnum, GD4N::CGameObject* other);
 
 	// moves
-	void accelerate_up();
-	void accelerate_down(); 
-	void accelerate_left(); 
-	void accelerate_right();
-	void dashccelerate();
-	void undash();
+		void accelerate_up();
+		void accelerate_down(); 
+		void accelerate_left(); 
+		void accelerate_right();
+		void dashccelerate();
+		void undash();
 
-	void dash();
-	void jump();
-	void breakjump();
-	void attack();
-	void slash(int slashnum);
+		void dash();
+		void jump();
+		void breakjump();
+		void attack();
+		void slash(int slashnum);
 
 	//control logic
-	void disableJump();
-	void reenableJump();
-	void land();
-	int attacknum;
-	bool dashslashing;
-	bool isDropping;
+		void disableJump();
+		void reenableJump();
+		void land();
+		int attacknum;
+		bool dashslashing;
+		bool isDropping;
 
-	void disableDash();
-	void reenableDash();
+		void disableDash();
+		void reenableDash();
 
 	//points system
-	float timeSinceLastPoint;
-	void earnTimePoints();
-	float lastKillTime;
+		float timeSinceLastPoint;
+		void earnTimePoints();
+		float lastKillTime;
 
 	//combo system
-	int comboCount;
-	float comboPointsPerKill;
-	void earnComboPoints();
-	void decayComboPoints();
-	void earnMultiplier();
-	void decayMultiplier();
-	
-	
+		int comboCount;
+		float comboPointsPerKill;
+		void earnComboPoints();
+		void decayComboPoints();
+		void earnMultiplier();
+		void decayMultiplier();
+		
 	int* highScorePtr;
 	CSlasherGameManager* gameManagerPtr;
+
+	//debug
+		void DrawDebug();
+		void debugNumber(const int x, const int y, const int digits, const int* number);
+		void drawSlashAfter(const int x, const int y);
+		void debugNumber(const int x, const int y, const int digits, const float* number);
+		GD4N::CSurfaceSheet *UINumbersTexture;
 
 public:
 	CZero(CSlasherGameManager* gameManager);
@@ -174,9 +168,6 @@ const int sfZeroDashing[] =		{	104, 105, 106								};
 const int sfZeroBreak[]	=		{	107, 108, 109, 110, 110, 110, 110	};
 
 
-
-
-
 typedef struct animationsegment {
 	int numberOfFrames;
 	float delay;
@@ -186,7 +177,7 @@ typedef struct animationsegment {
 } animPart;
 
 const animPart aCycle[] = {	
-	//  { numberofFrames					,	delay,		loops?,		sprite frame array		, next animation state}
+	//  { numberofFrames					,	delay,	loops(unused),	sprite frame array		, next animation state}
 		{ sizeof(sfZeroStand)/sizeof(int)	,	0.33f,		true	,	(int*)&sfZeroStand		, AS_STANDING	}, //zero standing
 		{ sizeof(sfZeroIntoRun)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroIntoRun	, AS_RUNNING	}, //zero into running
 		{ sizeof(sfZeroRun)/sizeof(int)		,	0.033f,		true	,	(int*)&sfZeroRun		, AS_RUNNING	}, //zero running
@@ -214,7 +205,7 @@ typedef struct slashCircle {
 	float damage;
 } slashBoxspec;
 
-enum slashBoxIDs {
+enum slashIDs {
 	SLASH_NOTSLASH = 0,
 	SLASH_GROUND1,
 	SLASH_GROUND2,
@@ -225,6 +216,7 @@ enum slashBoxIDs {
 
 const slashBoxspec slashCircles[] = {
  // {radius,		x_offset,		y_offset,		damage}
+	{0,				0,				0,				0},
 	{29	,			25,				-28	,			30},
 	{9	,			53,				-19	,			30},
 	{37	,			31,				-27	,			60},
