@@ -4,26 +4,26 @@
 #include "constants.h"
 
 CZUILifebar::CZUILifebar() : CGameObject() {
-	position.x				= LIFEBAR_X;	// all other positions depend on this
-	position.y				= LIFEBAR_Y;
-	logo					= true;
+	position.x					= LIFEBAR_X;	// all other positions depend on this
+	position.y					= LIFEBAR_Y;
+	logo						= true;
 
-	logoposition.x			= LOGOPOS_X;
-	logoposition.y			= LOGOPOS_Y;
-	UIpoints_lag			= 0;
+	logoposition.x				= LOGOPOS_X;
+	logoposition.y				= LOGOPOS_Y;
+	UIpoints_lag				= 0;
 
-	srcposition.x			= 0;			// length of the health bar
-	srcposition.y			= 0;			//max is LIFEBAR_MAXSPRITEY
-	srcposition_lag.x		= 0;			// length of the lagging health bar
-	srcposition_lag.y		= 0;
-	targetsrcposition.x		= 0;			//target length of the bar
-	targetsrcposition.y		= 0;
+	srcposition.x				= 0;			// length of the health bar
+	srcposition.y				= 0;			//max is LIFEBAR_MAXSPRITEY
+	srcposition_lag.x			= 0;			// length of the lagging health bar
+	srcposition_lag.y			= 0;
+	targetsrcposition.x			= 0;			//target length of the bar
+	targetsrcposition.y			= 0;
 	
 	//General UI Positions
-	positionContainer.x		= position.x - 5;
-	positionContainer.y		= position.y - 4;
-	positionPortrait.x		= position.x - 100;
-	positionPortrait.y		= position.y - 55;
+	positionContainer.x			= position.x + CONTAINER_OFFSETX;
+	positionContainer.y			= position.y + CONTAINER_OFFSETY;
+	positionPortrait.x			= position.x + PORTRAIT_OFFSETX;
+	positionPortrait.y			= position.y + PORTRAIT_OFFSETY;
 
 	//Combo Bar Positions
 	comboposition.x				= position.x + COMBOBAR_OFFSETX;
@@ -37,8 +37,8 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 	posHighscorelabel.x			= position.x + HIGHSCORE_LABEL_OFFSETX;
 	posHighscorelabel.y			= position.y + HIGHSCORE_LABEL_OFFSETY;
 
-	maxwidth				= LIFEBAR_MAXWIDTH;
-	flashing				= 0;
+	maxwidth					= LIFEBAR_MAXWIDTH;
+	flashing					= 0;
 
 	lifeTargetPercent		= 100.0;
 

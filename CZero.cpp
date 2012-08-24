@@ -49,7 +49,7 @@ CZero::CZero(CSlasherGameManager* gameManager) : CGameObject() {
 	isDropping		= false;
 
 	dashslashing	= false;
-	attacknum		= 0;
+	attacknum		= SLASH_NOTSLASH;
 	previousTime	= SDL_GetTicks() * 0.01f;
 
 	zeroState		= STATE_STANDING;
@@ -263,10 +263,11 @@ void CZero::land() {
 	vy = 0;
 	zeroState = STATE_STANDING;
 	animZeroState = AS_LANDING;
-	attacknum = 0;
+	attacknum = SLASH_NOTSLASH;
 	falling = false;
 	dashing = false;
 	sAudio->PlaySound(SFXID_ZLAND);
+	spriteTimeLast = sTime->GetTime();
 }
 
 // ANIMATION
@@ -332,13 +333,14 @@ void CZero::forwardFrame() {
 	}
 }
 void CZero::decideFrame() {
-	if(zeroState != lastZeroState) { curFrame = 0; }			// reset curFrame to show first frame if animation state changed
+	// when the last frame is reached, play the next animation (defined by the chunks of animation)
+	int nMaxFrame = aCycle[animZeroState].numberOfFrames;
+	if(curFrame >= nMaxFrame) nextAnimState();					
 
-	int nMaxFrame = aCycle[animZeroState].numberOfFrames;		// 
+	if(zeroState != lastZeroState) { curFrame = 0; spriteTimeBetween = aCycle[animZeroState].delay + 0.01f;}			// reset curFrame to show first frame if animation state changed
 
-	if(curFrame >= nMaxFrame) nextAnimState();					// when the last frame is reached, play the next animation
+	//change sprite state so draw() draws the right sprite
 	drawFrame = aCycle[animZeroState].spriteFrame[curFrame];
-
 	zeroTexture->SetCurrentFrame(drawFrame);
 	zeroTextureL->SetCurrentFrame(drawFrame);
 }
@@ -389,6 +391,7 @@ void CZero::dash() {
 			dashing = true;
 			sAudio->PlaySound(SFXID_ZDASH);
 		}
+		
 		//continue upward acceleration
 		dashccelerate();
 		dashfuel -= DASHCONSUMPTION * dt;
@@ -415,32 +418,32 @@ void CZero::attack() {
 	
 	// 
 	// ANIMATION-CENTRIC DUMMY ATTACK CONTROL LOGIC CODE. DO NOT USE AS IS BECAUSE THIS IS REALLY BUGGY.
-	if(!falling) {
-		if(	attacknum == 0 &&
+	if(!falling) {									// ground attacks
+		if(	attacknum == SLASH_NOTSLASH &&
 			(animZeroState == AS_STANDING ||		//these are the conditions when zero should be allowed to do a primary slash
 			animZeroState == AS_KEEPSABER ||
 			animZeroState == AS_LANDING ||
 			animZeroState == AS_RUNNING ||
 			animZeroState == AS_STARTRUN ||
 			animZeroState == AS_STOPRUN)
-		)									{	slash(1);	}	//slash 1
-		if (attacknum == 1 && curFrame > 5)	{	slash(2);	}	//slash 2
-		if (attacknum == 2 && curFrame > 5)	{	slash(3);	}	//slash 3
+		)												{	slash(SLASH_GROUND1);	}	//slash 1 SLASH_GROUND1
+		if (attacknum == SLASH_GROUND1 && curFrame > 5)	{	slash(SLASH_GROUND2);	}	//slash 2 SLASH_GROUND2
+		if (attacknum == SLASH_GROUND2 && curFrame > 5)	{	slash(SLASH_GROUND3);	}	//slash 3 SLASH_GROUND3
 
-		if(dashing && !dashslashing)		{	slash(17);	}	//dashing slash (code 17)
+		if(dashing && !dashslashing)					{	slash(SLASH_DASH);	}					//dashing slash SLASH_DASH
 	}
 
-	if (falling && attacknum == 0)			{	slash(13);	}		// air slash (code 13)
+	if (falling && attacknum == SLASH_NOTSLASH)			{	slash(SLASH_AIR);	}		// air slash SLASH_AIR
 	
 }
 void CZero::slash(int slashnum){
 	switch(slashnum) {
-		case 0: break;
-		case 1: animZeroState = AS_SLASH1; sAudio->PlaySound(SFXID_ZSLASH1); break;
-		case 2: animZeroState = AS_SLASH2; sAudio->PlaySound(SFXID_ZSLASH2); break;
-		case 3: animZeroState = AS_SLASH3; sAudio->PlaySound(SFXID_ZSLASH3); break;
-		case 13: animZeroState = AS_AIRSLASH; sAudio->PlaySound(SFXID_ZSLASHAIR); break;
-		case 17:	animZeroState = AS_DSLASHING;
+		case SLASH_NOTSLASH: break;
+		case SLASH_GROUND1: animZeroState = AS_SLASH1; sAudio->PlaySound(SFXID_ZSLASH1); break;
+		case SLASH_GROUND2: animZeroState = AS_SLASH2; sAudio->PlaySound(SFXID_ZSLASH2); break;
+		case SLASH_GROUND3: animZeroState = AS_SLASH3; sAudio->PlaySound(SFXID_ZSLASH3); break;
+		case SLASH_AIR:		animZeroState = AS_AIRSLASH; sAudio->PlaySound(SFXID_ZSLASHAIR); break;
+		case SLASH_DASH:	animZeroState = AS_DSLASHING;
 					sAudio->PlaySound(SFXID_ZSLASHAIR);
 					dashing = false;
 					dashslashing = true;
@@ -449,12 +452,14 @@ void CZero::slash(int slashnum){
 					break;
 	}
 	
-	attacknum = slashnum;
+	attacknum = slashnum;				// set attack state, also enables collision check
+
+	//animation specific stuff, cleanup if we can
 	curFrame = 0;
 	spriteTimeLast = sTime->GetTime();
 }
 
-//COLLISIONS
+//COLLISIONS AND ATTACKS
 bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 	switch (other->GetType()) {
 		case TYPE_PLATFORM:
@@ -478,10 +483,13 @@ bool CZero::IsCollidingWith(GD4N::CGameObject* other){
 			}
 			break;
 		case TYPE_ASTEROID:
-			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-			if(!asteroid->exploded){
-				return attackCheck(attacknum, other);
-			}
+			if (attacknum == SLASH_NOTSLASH) { break; }		//don't check if not slashing
+			if (curFrame < 4)				 { break; }		//don't check at start of animation
+
+			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);			//don't check if asteroid is exploded
+			if(asteroid->exploded){ break; }
+			
+			return attackCheck(attacknum, other);
 			break;			
 	};
 	return false;
@@ -497,13 +505,39 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 			break;
 		case TYPE_ASTEROID:
 			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-			asteroid->explode();
+			asteroid->takeDamage(1);
 			earnComboPoints();
 
 			lastKillTime = sTime->GetTime();
 			points += KILLSCORE*(multiplier);
 			break;
     };
+}
+bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
+	CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
+	
+	if(asteroid->exploded) return false;		// don't even consider colliding with an exploded asteroid. the check in IsCollidingWith does not work
+	
+	slashCircle thisSlash;
+
+	thisSlash = slashCircles[attacknum];		// now attacknum also corresponds with the thisSlash array's enum
+	
+	float slashX = position.x + thisSlash.x_offset;
+	float slashY = position.y + thisSlash.y_offset;
+	float slashRadius = thisSlash.radius;
+	
+	if(!facingRight){
+		slashX = position.x - thisSlash.x_offset;
+	}
+
+	bool isAHit = AreCirclesIntersecting(slashX, slashY, slashRadius, asteroid->position.x, asteroid->position.y, asteroid->radius);
+	//if(attacknum == 2){	}
+
+	return isAHit;
+}
+bool CZero::AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB) {
+	float distanceSq = (posAX - posBX) * (posAX - posBX) + (posAY - posBY) * (posAY - posBY);
+	return ( (radiusA + radiusB) * (radiusA + radiusB) > distanceSq );
 }
 
 // DEBUG NUMBERS
@@ -533,7 +567,7 @@ void CZero::DrawDebug(){
 	//timer debug
 	int checktime = sTime->GetTime();
 	debugNumber(450,550, 3, &checktime);
-	int checkdt = dt * 1000;
+	int checkdt = sTime->GetDt() * 100000;
 	debugNumber(500,550, 4, &checkdt);
 
 
@@ -568,36 +602,3 @@ void CZero::debugNumber(const int x, const int y, const int digits, const float*
 	debugNumber(x, y, digits, &debugfloat);
 }
 
-bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
-	CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-	
-	if(asteroid->exploded) return false;		// don't even consider colliding with an exploded asteroid
-	
-	slashCircle thisSlash;
-	switch(attacknum) {
-		case 0: return false;
-		case 1: thisSlash = slashCircles[SLASH_GROUND1];	break;
-		case 2: thisSlash = slashCircles[SLASH_GROUND2];	break;
-		case 3: thisSlash = slashCircles[SLASH_GROUND3];	break;
-		case 13: thisSlash = slashCircles[SLASH_AIR];	break;
-		case 17: thisSlash = slashCircles[SLASH_DASH];	break;
-	};
-	
-	float slashX = position.x + thisSlash.x_offset;
-	float slashY = position.y + thisSlash.y_offset;
-	float slashRadius = thisSlash.radius;
-	
-	if(!facingRight){
-		slashX = position.x - thisSlash.x_offset * 2;
-	}
-
-	bool isAHit = AreCirclesIntersecting(slashX, slashY, slashRadius, asteroid->position.x, asteroid->position.y, asteroid->radius);
-	//if(attacknum == 2){	}
-
-	return isAHit;
-}
-
-bool CZero::AreCirclesIntersecting(float posAX, float posAY, float radiusA, float posBX, float posBY, float radiusB) {
-	float distanceSq = (posAX - posBX) * (posAX - posBX) + (posAY - posBY) * (posAY - posBY);
-	return ( (radiusA + radiusB) * (radiusA + radiusB) > distanceSq );
-}

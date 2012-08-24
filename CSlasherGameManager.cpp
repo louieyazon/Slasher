@@ -24,8 +24,8 @@ using namespace GD4N;
 bool gameOn = false;
 
 CSlasherGameManager::CSlasherGameManager() {
-	windowTitle = (char *)"Zero Slasher";
-	icon = (char *)"images/icon.bmp";
+	windowTitle = (char *)"Zero Asteroid Slasher";
+	//icon = (char *)"images/icon.bmp";
 	
 	
 }

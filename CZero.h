@@ -186,7 +186,7 @@ typedef struct animationsegment {
 } animPart;
 
 const animPart aCycle[] = {	
-	//  { numberofFrames					,	delay,		loops,		sprite frame array		, next animation state}
+	//  { numberofFrames					,	delay,		loops?,		sprite frame array		, next animation state}
 		{ sizeof(sfZeroStand)/sizeof(int)	,	0.33f,		true	,	(int*)&sfZeroStand		, AS_STANDING	}, //zero standing
 		{ sizeof(sfZeroIntoRun)/sizeof(int)	,	0.033f,		false	,	(int*)&sfZeroIntoRun	, AS_RUNNING	}, //zero into running
 		{ sizeof(sfZeroRun)/sizeof(int)		,	0.033f,		true	,	(int*)&sfZeroRun		, AS_RUNNING	}, //zero running
@@ -215,7 +215,8 @@ typedef struct slashCircle {
 } slashBoxspec;
 
 enum slashBoxIDs {
-	SLASH_GROUND1 = 0,
+	SLASH_NOTSLASH = 0,
+	SLASH_GROUND1,
 	SLASH_GROUND2,
 	SLASH_GROUND3,
 	SLASH_AIR,

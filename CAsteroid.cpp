@@ -8,44 +8,55 @@
 #include "CGameTimer.h"
 
 CAsteroid::CAsteroid(float spawndelay) : CGameObject() {
-	sceneStartTime = sTime->GetTime();
-	asteroidspawndelay = spawndelay;
-	asteroidOn = false;
-	radius = ASTEROID_RADIUS;
-	spriteTimeBetween = 0.02;
-	spriteTimeLast = sTime->GetTime();
-	type = TYPE_ASTEROID;
+	//initial spawn behavior
+	sceneStartTime			= sTime->GetTime();
+	asteroidspawndelay		= spawndelay;
+	asteroidOn				= false;
 
+	//subsequent spawn behavior
 	generateNextY();
 	Respawn();
-	arrow_y = next_y;
-
-	explodesheet =  new GD4N::CSurfaceSheet(SURFID_EXPLODE);
-	explodesheet->SetSpriteDimensions(2,9);
-	explodesheet->SetCurrentFrame(explodeframe);
-
-	explodesheet2 =  new GD4N::CSurfaceSheet(SURFID_EXPLODE);
-	explodesheet2->SetSpriteDimensions(2,9);
-
-	explodesheet3 =  new GD4N::CSurfaceSheet(SURFID_EXPLODE);
-	explodesheet3->SetSpriteDimensions(2,9);
-
-	explodesheet->SetCurrentFrame(explodeframe);
+	arrow_y					= next_y;
 	
+	//collision 
+	type					=	TYPE_ASTEROID;
+	radius					= ASTEROID_RADIUS;
+	hitpoints				= ASTEROIDMAXHP;
 
+	//animation stuff
+	spriteTimeBetween		= 0.02;
+	spriteTimeLast			= sTime->GetTime();
 
+	initExplodes();
 }
+void CAsteroid::initExplodes() {
+	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++){
+		//init sheet
+		explosion[r].explodesheet = new GD4N::CSurfaceSheet(SURFID_EXPLODE);
+		(explosion[r].explodesheet)->SetSpriteDimensions(2,9);
+		(explosion[r].explodesheet)->SetCurrentFrame(explosion[r].frame);
+		
+		explosion[r].v.x = -7 + (rand() % 7);
+		explosion[r].v.y = (rand() % 7) - (rand() % 7);
+	}
+	resetExplodes();
+
+	explosion[0].initoffset.Assign(-15, 0);
+	explosion[1].initoffset.Assign(-40, -40);
+	explosion[2].initoffset.Assign(-35, 10);
+}
+
 
 CAsteroid::~CAsteroid() {
-	delete explodesheet;
-	delete explodesheet2;
-	delete explodesheet3;
+	cleanupExplodeSheets();	//delete sheets from explode array
+}
+void CAsteroid::cleanupExplodeSheets() {
+	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++){
+		if(explosion[r].explodesheet != NULL) { delete explosion[r].explodesheet; }
+		explosion[r].explodesheet = 0;
+	}
 }
 
-void CAsteroid::explode() {
-	exploded = true;
-	sAudio->PlaySound(SFXID_EXPLODE);
-}
 
 
 
@@ -70,24 +81,41 @@ void CAsteroid::Draw() {
 		sVideo->Draw(SURFID_ARROW, arrowposition);
 	}
 }
-
-
 void CAsteroid::drawExplode(){
-	GD4N::TVector2<int> drawexposition;
-	drawexposition.x = position.x - 50;
-	drawexposition.y = position.y;
-	sVideo->Draw(explodesheet, drawexposition);
+	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
+		if (explosion[r].isExploding) sVideo->Draw(explosion[r].explodesheet, explosion[r].position);
+	}
+}
+void CAsteroid::Animate() {
+	float timeGap = sTime->GetTime() - spriteTimeLast;
+	
+	if(timeGap > spriteTimeBetween){
+		spriteTimeLast = sTime->GetTime();
+		for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
+			//implement delays between explosions
 
-	if(explodeframe2 >= 0) {
-		drawexposition.x = position.x - 40;
-		drawexposition.y = position.y - 40;
-		sVideo->Draw(explodesheet2, drawexposition);
+
+
+			if(r > 0 && explosion[r].isExploding == false && explosion[r-1].frame >= explosion[r].framesAfterPrevious) {
+				explosion[r].isExploding = true;
+				explosion[r].frame = -1;			//so the next line starts at 0
+			}
+
+			if(explosion[r].isExploding) {		//apply frame animation to exploding explosion
+				//if(timeGap > spriteTimeBetween * 2) explosion[r].explodeframe++;			// frameskip 1
+				explosion[r].frame++;
+				explosion[r].explodesheet->SetCurrentFrame(explosion[r].frame);
+				moveExplosion(r);
+			}
+
+		}
+
+		if(explosion[ EXPLODE_SPRITES_PER_ASTEROID / 2].frame == 1) sAudio->PlaySound(SFXID_EXPLODE);		//play sound
 	}
-	if(explodeframe3 >= 0) {
-		drawexposition.x = position.x - 35;
-		drawexposition.y = position.y + 10;
-		sVideo->Draw(explodesheet3, drawexposition);
-	}
+}
+void CAsteroid::moveExplosion(int r){
+	explosion[r].position.x = explosion[r].position.x + (explosion[r].v.x);
+	explosion[r].position.y = explosion[r].position.y + (explosion[r].v.y);
 }
 
 void CAsteroid::Update() {
@@ -101,29 +129,8 @@ void CAsteroid::Update() {
 		bound();
 	}
 }
-
-void CAsteroid::Animate() {
-	float timeGap = sTime->GetTime() - spriteTimeLast;
-	
-	if(timeGap > spriteTimeBetween){
-		spriteTimeLast = sTime->GetTime();
-		explodeframe++;
-		if(explodeframe2 == 1) sAudio->PlaySound(SFXID_EXPLODE);
-		//if(timeGap > spriteTimeBetween * 2) explodeframe++;			// frameskip 1
-	}
-
-	explodeframe2 = explodeframe - 5;
-	explodeframe3 = explodeframe2 - 8;
-
-	explodesheet->SetCurrentFrame(explodeframe);
-	if(explodeframe2 >= 0) explodesheet2->SetCurrentFrame(explodeframe2);
-	if(explodeframe3 >= 0) explodesheet3->SetCurrentFrame(explodeframe3);
-
-	
-}
-
 void CAsteroid::bound() {
-	if (exploded && explodeframe3 > 17) Respawn();
+	if (exploded && explosion[ EXPLODE_SPRITES_PER_ASTEROID - 1 ].frame >= 17) Respawn();
 
 	if(position.x < CUTEFACTORY_X && !exploded) {
 		explode();
@@ -132,7 +139,9 @@ void CAsteroid::bound() {
 
 }
 
+
 void CAsteroid::Respawn() {
+	
 	exploded		= false;
 	explodeframe	= -1;
 	explodeframe3	= 0;
@@ -140,12 +149,41 @@ void CAsteroid::Respawn() {
 	position.y		= next_y;
 	vx				= randoValue(MIN_AVX, MAX_AVX);
 	generateNextY();
+	resetExplodes();
 }
-
+void CAsteroid::resetExplodes() {
+	//init values
+	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++){
+		explosion[r].frame = -1;
+		explosion[r].isExploding = false;
+		explosion[r].position.Assign(0,0);
+		explosion[r].framesAfterPrevious = 4 + (rand() % 4);
+		int rx = -20 - (rand() % 30);
+		int ry = (rand() % 50);
+		int ry2 = (rand() % 50);
+		explosion[r].initoffset.Assign(rx, ry - ry2);
+	}
+}
 void CAsteroid::generateNextY() {
 	next_y = randoValue(ASPAWN_YMIN, ASPAWN_YMAX);
 }
 
+void CAsteroid::explode() {
+	setExplodeInitPositions();
+	explosion[0].isExploding = true;
+	exploded = true;
+	sAudio->PlaySound(SFXID_EXPLODE);
+}
+void CAsteroid::setExplodeInitPositions(){
+	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
+		explosion[r].position.Assign (  position.x + explosion[r].initoffset.x		,		position.y + explosion[r].initoffset.y  );
+	}
+}
+
+
+void CAsteroid::takeDamage(int dmg) {
+	explode();
+}
 void CAsteroid::setLifeTarget(float* lifetarget) {
 	zlifetarget = lifetarget;
 }
