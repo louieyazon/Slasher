@@ -67,10 +67,11 @@ void CSlasherGameManager::LoadResources() {
 	//CMusic::Load((char*)"music/02-Molly.mp3", MUSICID_02);
 	sMusicPool->CleanUp();
 	
-	CSurface::Load((char *)"images/zeroslasherlogo.png", SURFID_SLASHERLOGO);
+	
 	CSurface::Load((char *)"images/platform.png", SURFID_PLATFORM);
-	CSurface::Load((char *)"images/arrow.png", SURFID_ARROW);
-	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
+	
+	//UI
+	CSurface::Load((char *)"images/zeroslasherlogo.png", SURFID_SLASHERLOGO);
 	CSurface::Load((char *)"images/lifebar_combo.png", SURFID_COMBOBAR);
 	CSurface::Load((char *)"images/highscorelabel.png", SURFID_HIGHSCORELABEL);
 	CSurface::Load((char *)"images/lifebar.png", SURFID_LIFEBAR);
@@ -78,23 +79,27 @@ void CSlasherGameManager::LoadResources() {
 	CSurface::Load((char *)"images/lifebar_white.png", SURFID_LIFEBARWHITE);
 	CSurface::Load((char *)"images/zeroportraitbar.png", SURFID_ZEROPORTRAIT);
 	CSurface::Load((char *)"images/lifebar_holder.png", SURFID_LIFECONTAINER);
+
+	//numbers
 	CSurface::Load((char *)"images/zeronumbers.png", SURFID_UINUMBERS);
 	CSurface::Load((char *)"images/zerolargenumbers.png", SURFID_UILARGENUMBERS);
 	CSurface::Load((char *)"images/zerohighscorenumbers.png", SURFID_UIHIGHSCORENUMBERS);
+	
+	//asteroid 
 	CSurface::Load((char *)"images/explode.png", SURFID_EXPLODE);
-	if(SHOW_DEBUG_NUMBERS) {
-		CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);
-	} else {
-		CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);
-	}
+	CSurface::Load((char *)"images/asteroid.png", SURFID_ASTEROID);
+	CSurface::Load((char *)"images/asteroid_bits.png", SURFID_ASTEROIDBITS);
+	CSurface::Load((char *)"images/arrow.png", SURFID_ARROW);
 
-	if(SHOW_SPRITE_NOTES) {
-		CSurface::Load((char *)"images/Zero_debug.png", SURFID_ZERO);
-		CSurface::Load((char *)"images/Zero_l_debug.png", SURFID_ZEROL);
-	} else {
-		CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
-		CSurface::Load((char *)"images/Zero_l.png", SURFID_ZEROL);
-	}
+
+
+	if(SHOW_DEBUG_NUMBERS) {	CSurface::Load((char *)"images/bkgd_debug.jpg", SURFID_BKGD);	}
+	else {						CSurface::Load((char *)"images/bkgd.jpg", SURFID_BKGD);			}
+
+	if(SHOW_SPRITE_NOTES) {		CSurface::Load((char *)"images/Zero_debug.png", SURFID_ZERO);
+								CSurface::Load((char *)"images/Zero_l_debug.png", SURFID_ZEROL);	}
+	else {						CSurface::Load((char *)"images/Zero.png", SURFID_ZERO);
+								CSurface::Load((char *)"images/Zero_l.png", SURFID_ZEROL);		}
 
 	sSurfacePool->CleanUp();
 }

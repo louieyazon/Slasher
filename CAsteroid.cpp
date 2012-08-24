@@ -24,10 +24,17 @@ CAsteroid::CAsteroid(float spawndelay) : CGameObject() {
 	hitpoints				= ASTEROIDMAXHP;
 
 	//animation stuff
+	ay						= 1;
 	spriteTimeBetween		= 0.02;
 	spriteTimeLast			= sTime->GetTime();
 
+	//asteroidbits stuff
+	asteroidbitssheet = new GD4N::CSurfaceSheet(SURFID_ASTEROIDBITS);
+	asteroidbitssheet->SetSpriteDimensions(2,2);
+	asteroidbitssheet->SetCurrentFrame(0);
+
 	initExplodes();
+	initAsteroidBits();
 }
 void CAsteroid::initExplodes() {
 	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++){
@@ -41,16 +48,21 @@ void CAsteroid::initExplodes() {
 	}
 	resetExplodes();
 
-	explosion[0].initoffset.Assign(-15, 0);
+	/*explosion[0].initoffset.Assign(-15, 0);
 	explosion[1].initoffset.Assign(-40, -40);
-	explosion[2].initoffset.Assign(-35, 10);
+	explosion[2].initoffset.Assign(-35, 10);*/
+}
+void CAsteroid::initAsteroidBits() {
+	randAsteroidBitspeed();
 }
 
 
 CAsteroid::~CAsteroid() {
-	cleanupExplodeSheets();	//delete sheets from explode array
+	cleanupSheets();	//delete sheets from explode array and bits array
 }
-void CAsteroid::cleanupExplodeSheets() {
+void CAsteroid::cleanupSheets() {
+	delete asteroidbitssheet;
+	
 	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++){
 		if(explosion[r].explodesheet != NULL) { delete explosion[r].explodesheet; }
 		explosion[r].explodesheet = 0;
@@ -58,12 +70,11 @@ void CAsteroid::cleanupExplodeSheets() {
 }
 
 
-
-
 void CAsteroid::Draw() {
 	GD4N::TVector2<int> drawposition;
 	if(exploded) {
 		Animate();
+		drawBits();
 		drawExplode();
 	} else {
 		drawposition.x = position.x - 60;
@@ -86,16 +97,26 @@ void CAsteroid::drawExplode(){
 		if (explosion[r].isExploding) sVideo->Draw(explosion[r].explodesheet, explosion[r].position);
 	}
 }
+void CAsteroid::drawBits(){
+	for(int r = 0; r < 4; r++) {
+		asteroidbitssheet->SetCurrentFrame(r);
+		sVideo->Draw(asteroidbitssheet, flyingbits[r].position);
+	}
+}
 void CAsteroid::Animate() {
 	float timeGap = sTime->GetTime() - spriteTimeLast;
 	
 	if(timeGap > spriteTimeBetween){
 		spriteTimeLast = sTime->GetTime();
+
+		if(exploded) {
+			for(int r = 0; r < 4; r++) {
+				moveBits(r);
+			}
+		}
+
 		for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
 			//implement delays between explosions
-
-
-
 			if(r > 0 && explosion[r].isExploding == false && explosion[r-1].frame >= explosion[r].framesAfterPrevious) {
 				explosion[r].isExploding = true;
 				explosion[r].frame = -1;			//so the next line starts at 0
@@ -116,6 +137,11 @@ void CAsteroid::Animate() {
 void CAsteroid::moveExplosion(int r){
 	explosion[r].position.x = explosion[r].position.x + (explosion[r].v.x);
 	explosion[r].position.y = explosion[r].position.y + (explosion[r].v.y);
+}
+void CAsteroid::moveBits(int r) {
+	flyingbits[r].position.x = flyingbits[r].position.x + (flyingbits[r].v.x);
+	flyingbits[r].position.y = flyingbits[r].position.y + (flyingbits[r].v.y);
+	flyingbits[r].v.y += ay;
 }
 
 void CAsteroid::Update() {
@@ -141,15 +167,12 @@ void CAsteroid::bound() {
 
 
 void CAsteroid::Respawn() {
-	
 	exploded		= false;
-	explodeframe	= -1;
-	explodeframe3	= 0;
-	position.x		= ASPAWN_X;
-	position.y		= next_y;
+	position.Assign(ASPAWN_X, next_y); 
 	vx				= randoValue(MIN_AVX, MAX_AVX);
 	generateNextY();
 	resetExplodes();
+	resetAsteroidBits();
 }
 void CAsteroid::resetExplodes() {
 	//init values
@@ -164,6 +187,17 @@ void CAsteroid::resetExplodes() {
 		explosion[r].initoffset.Assign(rx, ry - ry2);
 	}
 }
+
+void CAsteroid::resetAsteroidBits(){
+	for(int r = 0; r < 4; r++){
+		flyingbits[r].position.Assign(0,0);
+		int rx = (rand() % 50) - 20;
+		int ry = 60;
+		int ry2 = (rand() % 30);
+		flyingbits[r].initoffset.Assign(rx, ry - ry2);
+	}
+}
+
 void CAsteroid::generateNextY() {
 	next_y = randoValue(ASPAWN_YMIN, ASPAWN_YMAX);
 }
@@ -176,7 +210,16 @@ void CAsteroid::explode() {
 }
 void CAsteroid::setExplodeInitPositions(){
 	for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
-		explosion[r].position.Assign (  position.x + explosion[r].initoffset.x		,		position.y + explosion[r].initoffset.y  );
+		
+		if(r < 4) flyingbits[r].position.Assign (	position.x + flyingbits[r].initoffset.x		,		position.y + flyingbits[r].initoffset.y	);
+		explosion[r].position.Assign			(  position.x + explosion[r].initoffset.x		,		position.y + explosion[r].initoffset.y  );
+	}
+	randAsteroidBitspeed();
+}
+void CAsteroid::randAsteroidBitspeed() {
+	for(int r = 0; r < 4; r++){
+		flyingbits[r].v.x = 10 + (rand() % 10);
+		flyingbits[r].v.y = (rand() % 7) - (rand() % 7);
 	}
 }
 
