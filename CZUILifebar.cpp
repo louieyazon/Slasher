@@ -10,6 +10,7 @@ CZUILifebar::CZUILifebar() : CGameObject() {
 
 	logoposition.x			= LOGOPOS_X;
 	logoposition.y			= LOGOPOS_Y;
+	UIpoints_lag			= 0;
 
 	srcposition.x			= 0;			// length of the health bar
 	srcposition.y			= 0;			//max is LIFEBAR_MAXSPRITEY
@@ -105,7 +106,7 @@ void CZUILifebar::drawLogo() {
 	if(sTime->GetTime() > LOGO_DURATION + 1) { gameOn = true; }
 }
 void CZUILifebar::showPointsNumber() {
-	drawNumber(*UIpointsource, 340, 10, 21, 8, false, false, UINumbersTexture);
+	drawNumber(UIpoints_lag, 340, 10, 21, 8, false, false, UINumbersTexture);
 }
 void CZUILifebar::showHighScoreNumber() {
 	drawNumber(*UIhighscoresource, posHighscorelabel.x + 45, posHighscorelabel.y + 9, 8, NULL, true, true, UIHighscoreNumbersTexture);
@@ -128,6 +129,7 @@ void CZUILifebar::Update() {
 void CZUILifebar::equalize() {
 	int lagdiff = targetsrcposition.y - srcposition_lag.y;
 	int maindiff = targetsrcposition.y - srcposition.y;
+
 	
 
 	if(lagdiff > 0) {
@@ -150,6 +152,9 @@ void CZUILifebar::equalize() {
 		combosrcposition.y--;
 		if(combodiff < -10) combosrcposition.y += combodiff / 20;
 	}
+
+	int pointsdiff = *UIpointsource - UIpoints_lag;
+	if(pointsdiff != 0) UIpoints_lag += (pointsdiff + 0.5)/10.0;
 
 
 

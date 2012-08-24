@@ -186,16 +186,18 @@ void CZero::earnTimePoints() {
 void CZero::earnComboPoints() {
 	if(sTime->GetTime() - lastKillTime <= COMBO_WINDOW){
 		comboCount++;								//eventually remove this
-		if(multiplier == 10) hitpoints += MAX_HP/5;	//eventually update with new healing
+		//if(multiplier == 10) hitpoints += MAX_HP/5;	//eventually update with new healing
 
 		comboTank += comboPointsPerKill;
 		if(comboTank >= comboMultiplierThreshold) earnMultiplier();
+		if(rand() % HEAL_CHANCE_DENOMINATOR == 1 && hitpoints <= MAX_HP - HEAL_AMOUNT) hitpoints += HEAL_AMOUNT; 
 	} else {
 		comboCount = 1;								//reset combo points, remove in new system
 	}
 }
 void CZero::earnMultiplier() {
-	comboTank = 1;
+	comboTank -= comboMultiplierThreshold;
+	comboTank += 1;
 	multiplier += 1;
 }
 void CZero::decayComboPoints(){
@@ -431,7 +433,6 @@ void CZero::attack() {
 	if (falling && attacknum == 0)			{	slash(13);	}		// air slash (code 13)
 	
 }
-
 void CZero::slash(int slashnum){
 	switch(slashnum) {
 		case 0: break;
@@ -519,7 +520,7 @@ void CZero::DrawDebug(){
 
 	//sprite animator debug
 	debugNumber(230, 570, 2, &animZeroState);
-	drawSlashAfter(230, 570);
+	//drawSlashAfter(230, 570);
 	debugNumber(250, 570, 2, &curFrame);
 	int checkspritetime = spriteTimeBetween * 1000;
 	debugNumber(290, 570, 3, &checkspritetime);
@@ -587,12 +588,11 @@ bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
 	float slashRadius = thisSlash.radius;
 	
 	if(!facingRight){
-	slashX = position.x - thisSlash.x_offset * 2;
+		slashX = position.x - thisSlash.x_offset * 2;
 	}
 
 	bool isAHit = AreCirclesIntersecting(slashX, slashY, slashRadius, asteroid->position.x, asteroid->position.y, asteroid->radius);
-	if(attacknum == 2){
-	}
+	//if(attacknum == 2){	}
 
 	return isAHit;
 }

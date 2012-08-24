@@ -108,7 +108,7 @@ void CSlasherGameManager::Scene00() {
 	new CPlatform(PLATFORM_3X, PLATFORM_3Y);
 	new CPlatform(PLATFORM_4X, PLATFORM_4Y);
 
-	CAsteroid* aster = new CAsteroid(0);
+	CAsteroid* aster = new CAsteroid(FIRST_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster2 = new CAsteroid(SECOND_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster3 = new CAsteroid(THIRD_ASTEROID_SPAWNDELAY);
 	CAsteroid* aster4 = new CAsteroid(FOURTH_ASTEROID_SPAWNDELAY);
@@ -120,12 +120,13 @@ void CSlasherGameManager::Scene00() {
 	aster2->setLifeTarget(&zero->hitpoints);
 	aster3->setLifeTarget(&zero->hitpoints);
 	aster4->setLifeTarget(&zero->hitpoints);
+
+	//prepare ZHUD
 	ZHUD->setLifeSource(&zero->hitpoints);
 	ZHUD->setPointsSource(&zero->points);
 	ZHUD->setComboSource(&zero->comboTank);
 	ZHUD->setMultiplierSource(&zero->multiplier);
 	ZHUD->setComboThresholdSource(&zero->comboMultiplierThreshold);
-
 	ZHUD->setHighScoreSource(&highScore);
 }
 

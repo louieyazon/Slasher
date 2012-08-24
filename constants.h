@@ -11,12 +11,15 @@ const bool SHOW_SPRITE_NOTES = false;
 //POINTS SYSTEM and PACING
 const float TIME_POINT_RATE				= 0.350f;
 const float ASTEROID_DAMAGE				= 8.0f;
+const int HEAL_CHANCE_DENOMINATOR		= 4;
+const int HEAL_AMOUNT					= 5;
 
-const float SECOND_ASTEROID_SPAWNDELAY	= 60.0f;
-const float THIRD_ASTEROID_SPAWNDELAY	= 140.0f;
-const float FOURTH_ASTEROID_SPAWNDELAY	= 360.0f;
+const float FIRST_ASTEROID_SPAWNDELAY	= 2.0f;
+const float SECOND_ASTEROID_SPAWNDELAY	= 30.0f;
+const float THIRD_ASTEROID_SPAWNDELAY	= 100.0f;
+const float FOURTH_ASTEROID_SPAWNDELAY	= 200.0f;
 const int MAX_HP						= 100;
-const int KILLSCORE						= 100;
+const int KILLSCORE						= 20;
 
 //COMBO SYSTEM
 const float COMBO_WINDOW					= 3.00f;	// time between kills for combo to persist (3.00 seconds to lose 1 point)
@@ -60,7 +63,7 @@ const float ZAY				=	40.0f;		//acceleration
 
 const float ZJUMPY			=	1200.0f;	//this seems to be too big on slow computers, i wonder how to fix it.
 const float JUMP_FUEL_MAX	=	900;
-const float JUMPCONSUMPTION	=	450;
+const float JUMPCONSUMPTION	=	400;
 
 const float ZDASH			=	100.0f;
 const float DASH_VX			=	45.0f;

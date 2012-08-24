@@ -40,7 +40,7 @@ protected:
 	int* UIhighscoresource;
 	int* UImultipliersource;
 
-	
+	int UIpoints_lag;
 
 
 	//score
