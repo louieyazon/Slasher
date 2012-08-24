@@ -1,7 +1,7 @@
 #ifndef _constants_h
 #define _constants_h
 
-#include "sdl_keyboard.h"
+#include "sdl_keyboard.h"				//the compiler complains sometimes
 
 #define ZEROSPRITEOFFSET_X 88
 #define ZEROSPRITEOFFSET_Y 93
@@ -93,9 +93,9 @@ const bool SHOW_SPRITE_NOTES = false;
  **
  **/
 	//asteroid constants
-	const float MAX_AVX			= 35.0f;
+	const float MAX_AVX			= 25.0f;
 	const float MIN_AVX			= 20.0f;
-	const int	ASTEROIDMAXHP	= 200;
+	const int	ASTEROIDMAXHP	= 100;
 	const float ASPAWN_X		= 900.0;
 	const float CUTEFACTORY_X	= 60.0;
 	const float ASTEROID_RADIUS = 55.0;

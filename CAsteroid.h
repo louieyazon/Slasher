@@ -76,7 +76,7 @@ public:
 	~CAsteroid();
 
 	void explode();
-	void takeDamage(int dmg);
+	bool takeDamage(int dmg);
 	bool exploded;
 	int hitpoints;
 

@@ -24,7 +24,7 @@ CAsteroid::CAsteroid(float spawndelay) : CGameObject() {
 	hitpoints				= ASTEROIDMAXHP;
 
 	//animation stuff
-	ay						= 1;
+	ay						= GRAVITY_ACC * 2;
 	spriteTimeBetween		= 0.02;
 	spriteTimeLast			= sTime->GetTime();
 
@@ -105,15 +105,15 @@ void CAsteroid::drawBits(){
 }
 void CAsteroid::Animate() {
 	float timeGap = sTime->GetTime() - spriteTimeLast;
-	
-	if(timeGap > spriteTimeBetween){
-		spriteTimeLast = sTime->GetTime();
 
-		if(exploded) {
-			for(int r = 0; r < 4; r++) {
-				moveBits(r);
-			}
+	if(exploded) {
+		for(int r = 0; r < 4; r++) {
+			moveBits(r);
 		}
+	}
+	
+	if(timeGap > spriteTimeBetween){			// frame dependent
+		spriteTimeLast = sTime->GetTime();
 
 		for(int r = 0; r < EXPLODE_SPRITES_PER_ASTEROID; r++) {
 			//implement delays between explosions
@@ -138,11 +138,7 @@ void CAsteroid::moveExplosion(int r){
 	explosion[r].position.x = explosion[r].position.x + (explosion[r].v.x);
 	explosion[r].position.y = explosion[r].position.y + (explosion[r].v.y);
 }
-void CAsteroid::moveBits(int r) {
-	flyingbits[r].position.x = flyingbits[r].position.x + (flyingbits[r].v.x);
-	flyingbits[r].position.y = flyingbits[r].position.y + (flyingbits[r].v.y);
-	flyingbits[r].v.y += ay;
-}
+
 
 void CAsteroid::Update() {
 	if(!asteroidOn) {
@@ -164,10 +160,15 @@ void CAsteroid::bound() {
 	}
 
 }
-
+void CAsteroid::moveBits(int r) {
+	flyingbits[r].position.x = flyingbits[r].position.x + (flyingbits[r].v.x * dt);
+	flyingbits[r].position.y = flyingbits[r].position.y + (flyingbits[r].v.y * dt);
+	flyingbits[r].v.y += ay * dt;
+}
 
 void CAsteroid::Respawn() {
 	exploded		= false;
+	hitpoints		= ASTEROIDMAXHP;
 	position.Assign(ASPAWN_X, next_y); 
 	vx				= randoValue(MIN_AVX, MAX_AVX);
 	generateNextY();
@@ -218,14 +219,19 @@ void CAsteroid::setExplodeInitPositions(){
 }
 void CAsteroid::randAsteroidBitspeed() {
 	for(int r = 0; r < 4; r++){
-		flyingbits[r].v.x = 10 + (rand() % 10);
-		flyingbits[r].v.y = (rand() % 7) - (rand() % 7);
+		flyingbits[r].v.x = vx * 2;
+		flyingbits[r].v.y = -(rand() % 50);
 	}
 }
 
 
-void CAsteroid::takeDamage(int dmg) {
-	explode();
+bool CAsteroid::takeDamage(int dmg) {
+	hitpoints -= dmg;
+	if(hitpoints < 0) { 
+		explode();
+		return true;
+	}
+	return false;
 }
 void CAsteroid::setLifeTarget(float* lifetarget) {
 	zlifetarget = lifetarget;

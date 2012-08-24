@@ -505,12 +505,13 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 			break;
 		case TYPE_ASTEROID:
 			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-			asteroid->takeDamage(1);
-			earnComboPoints();
-
-			lastKillTime = sTime->GetTime();
-			points += KILLSCORE*(multiplier);
-			break;
+			bool killed = asteroid->takeDamage(20);
+			if(killed) {
+				earnComboPoints();
+				lastKillTime = sTime->GetTime();
+				points += KILLSCORE*(multiplier);
+			}
+				break;
     };
 }
 bool CZero::attackCheck(int attacknum, GD4N::CGameObject* other) {
