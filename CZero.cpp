@@ -507,7 +507,12 @@ void CZero::CollidesWith(GD4N::CGameObject* other){
 
 		case TYPE_ASTEROID:
 			CAsteroid* asteroid = dynamic_cast<CAsteroid*>(other);
-			bool killed = asteroid->takeDamage(20, 0, 0);
+			float xforce = vx;
+			float xsaberforce = 50;
+			if(facingRight) xforce += xsaberforce*2;
+			else xforce -= xsaberforce;
+
+			bool killed = asteroid->takeDamage(20, xforce, -vy);
 			if(killed) {
 				earnComboPoints();
 				lastKillTime = sTime->GetTime();

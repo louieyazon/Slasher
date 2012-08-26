@@ -137,6 +137,11 @@ void CAsteroid::Animate() {
 void CAsteroid::moveExplosion(int r){
 	explosion[r].position.x = explosion[r].position.x + (explosion[r].v.x);
 	explosion[r].position.y = explosion[r].position.y + (explosion[r].v.y);
+
+	if (r < 4) {
+		explosion[r].position.x += (flyingbits[r].position.x - explosion[r].position.x) / 100;
+		explosion[r].position.y += (flyingbits[r].position.y - explosion[r].position.y) / 100;
+	}
 }
 
 
@@ -164,6 +169,8 @@ void CAsteroid::moveBits(int r) {
 	flyingbits[r].position.x = flyingbits[r].position.x + (flyingbits[r].v.x * dt);
 	flyingbits[r].position.y = flyingbits[r].position.y + (flyingbits[r].v.y * dt);
 	flyingbits[r].v.y += ay * dt;
+	//flyingbits[r].v.y *= 0.99995;
+	flyingbits[r].v.x -= 1;
 }
 
 void CAsteroid::Respawn() {
@@ -218,17 +225,34 @@ void CAsteroid::setExplodeInitPositions(){
 	randAsteroidBitspeed();
 }
 void CAsteroid::randAsteroidBitspeed() {
+	float magn = 35.0f;
+	flyingbits[0].v.Assign(-magn, -magn*2);
+	flyingbits[1].v.Assign(magn, -magn*2);
+	flyingbits[2].v.Assign(-magn, magn);
+	flyingbits[3].v.Assign(magn, magn);
+	
 	for(int r = 0; r < 4; r++){
-		flyingbits[r].v.x = vx * 2;
-		flyingbits[r].v.y = -(rand() % 50);
+		flyingbits[r].v.x += vx * 2;
+		flyingbits[r].v.y += -(rand() % 50);
+	}
+
+	
+
+	
+
+}
+void CAsteroid::inheritAsteroidBitSpeed(float ivx, float ivy) {
+	for(int r = 0; r < 4; r++){
+		flyingbits[r].v.x += ivx * ((70 + (rand() % 30)) / 100.0);
+		flyingbits[r].v.y += ivy * ((70 + (rand() % 30)) / 100.0);
 	}
 }
-
 
 bool CAsteroid::takeDamage(int dmg, float vx, float vy) {
 	hitpoints -= dmg;
 	if(hitpoints < 0) { 
 		explode();
+		inheritAsteroidBitSpeed(vx, vy);
 		return true;
 	}
 	return false;

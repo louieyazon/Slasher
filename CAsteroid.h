@@ -64,6 +64,7 @@ protected:
 	void initExplodes();
 	void initAsteroidBits();
 	void randAsteroidBitspeed();
+	void inheritAsteroidBitSpeed(float ivx, float ivy);
 	
 
 	void cleanupSheets();
